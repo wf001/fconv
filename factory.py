@@ -1,4 +1,6 @@
 import json
+import yaml
+import datetime
 from abc import ABCMeta, abstractmethod
 
 
@@ -13,10 +15,10 @@ class IFormat(metaclass=ABCMeta):
 
 
 class Json(IFormat):
-    def load(self, df):
-        with open('assets/sample01.json') as f:
-            df = json.load(f)
-        return df
+    def load(self, str):
+        res =  json.loads(str)
+        print(type(res))
+        return res
 
     def parse(self):
         pass
@@ -26,8 +28,8 @@ class Yaml(IFormat):
     def load(self):
         pass
 
-    def parse(self):
-        pass
+    def parse(self, data):
+        return yaml.dump(data, Dumper=yaml.CDumper)
 
 
 class Former:
@@ -35,29 +37,33 @@ class Former:
         self.src = src
         self.target = target
         self.data = None
+        self.df = None
 
     def former(self):
         self._get_input()
         self._to_dict()
         self._from_dict()
+        print(self.data)
         self._send_output()
 
     def _to_dict(self):
-        self.data = self.src().load()
+        self.data = self.src().load(self.df)
+        print(self.data)
 
     def _from_dict(self):
-        self.data = self.target().dump()
+        self.data = self.target().parse(self.data)
 
-    @staticmethod
-    def _get_input():
-        pass
+    def _get_input(self):
+        with open('assets/sample01.json') as f:
+            self.df = f.read()
 
-    @staticmethod
-    def _send_output():
-        pass
+    def _send_output(self):
+        dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        f = open(f'assets/result-{dt}.yaml', 'x+')
+        f.write(self.data)
 
 
 if __name__ == '__main__':
-    f = Former(Json, Json)
-    f._to_dict()
+    f = Former(Json, Yaml)
+    f.former()
     print(f.data)
