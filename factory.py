@@ -15,9 +15,8 @@ class IFormat(metaclass=ABCMeta):
 
 
 class Json(IFormat):
-    def load(self, str):
-        res =  json.loads(str)
-        print(type(res))
+    def load(self, str: str) -> dict:
+        res = json.loads(str)
         return res
 
     def parse(self):
@@ -28,42 +27,43 @@ class Yaml(IFormat):
     def load(self):
         pass
 
-    def parse(self, data):
+    def parse(self, data: dict) -> str:
         return yaml.dump(data, Dumper=yaml.CDumper)
 
 
 class Former:
-    def __init__(self, src, target):
+    def __init__(self, src, src_path, target, target_path):
         self.src = src
+        self.src_path = src_path
         self.target = target
+        self.target_path = target_path
         self.data = None
         self.df = None
 
     def former(self):
-        self._get_input()
+        self._get_input(self.src_path)
         self._to_dict()
         self._from_dict()
-        print(self.data)
-        self._send_output()
+        self._send_output(self.target_path)
 
     def _to_dict(self):
         self.data = self.src().load(self.df)
-        print(self.data)
 
     def _from_dict(self):
         self.data = self.target().parse(self.data)
 
-    def _get_input(self):
-        with open('assets/sample01.json') as f:
+    def _get_input(self, file: str) -> None:
+        with open(file) as f:
             self.df = f.read()
 
-    def _send_output(self):
-        dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        f = open(f'assets/result-{dt}.yaml', 'x+')
+    def _send_output(self, file: str) -> None:
+        f = open(file, 'x+')
         f.write(self.data)
 
 
 if __name__ == '__main__':
-    f = Former(Json, Yaml)
+    in_name = 'assets/sample01.json'
+    dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    out_name = f'assets/result-{dt}.yaml'
+    f = Former(Json, in_name, Yaml, out_name)
     f.former()
-    print(f.data)
