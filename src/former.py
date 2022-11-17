@@ -1,77 +1,86 @@
 import json
 import yaml
-import datetime
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
+import typing as t
 
 
-class IFormat(metaclass=ABCMeta):
+class AbstractFormat(ABC):
     @abstractmethod
     def load(self):
-        raise Exception()
+        pass
 
     @abstractmethod
-    def parse(self):
-        raise Exception()
+    def dump(self):
+        pass
 
 
 class Format:
 
-    class Json(IFormat):
-        def load(self, str: str) -> dict:
-            res = json.loads(str)
-            return res
+    class Json(AbstractFormat):
+        def load(self, src_ctx: str) -> dict:
+            return json.loads(src_ctx)
 
-        def parse(self, data: dict) -> str:
-            res = json.dumps(data, indent=1)
-            return res
+        def dump(self, internal: dict) -> str:
+            return json.dumps(internal, indent=1)
 
-    class Yaml(IFormat):
+    class Yaml(AbstractFormat):
         def load(self, str: str) -> dict:
             return yaml.safe_load(str)
 
-        def parse(self, data: dict) -> str:
-            return yaml.dump(data, Dumper=yaml.CDumper)
+        def dump(self, internal: dict) -> str:
+            return yaml.dump(internal, Dumper=yaml.CDumper)
+
+    class XML():
+        pass
 
 
 class Former:
     def __init__(
             self,
-            src,
-            target,
-            context=None,
-            src_path=None,
-            target_path=None
+            src_format: object = None,
+            target_format: object = None,
+            src_path: t.Optional[str] = None,
+            target_path: t.Optional[str] = None
     ):
         # TODO: self.src = src_dict[input_format]
-        self.src = src()
-        self.target = target()
+        self._src_format = src_format
+        self._target_format = target_format
         self.src_path = src_path
         self.target_path = target_path
 
-    def form(self) -> str:
-        if self.src_path:
-            ctx = self._get_input(self.src_path)
+        if not self.is_valid_format:
+            raise Exception
 
-        res = self._to_dict(ctx)
-        res = self._from_dict(res)
+    @property
+    def is_valid_format(self):
+        return issubclass(self._src_format, AbstractFormat) and \
+            issubclass(self._target_format, AbstractFormat)
+
+    def form(self, src_ctx: str = None) -> str:
+        if self.src_path and not src_ctx:
+            src_ctx = self._get_input(self.src_path)
+
+        target_ctx = self._from_internal(self._to_internal(src_ctx))
 
         if self.target_path:
-            self._send_output(res, self.target_path)
+            self._send_output(target_ctx, self.target_path)
 
-        return res
+        return target_ctx
 
-    def _get_input(self, file: str) -> str:
+    @staticmethod
+    def _get_input(file: str) -> str:
         with open(file) as f:
             ctx = f.read()
         return ctx
 
-    def _to_dict(self, ctx: str) -> dict:
-        return self.src.load(ctx)
+    def _to_internal(self, ctx: str) -> t.Any:
+        return self._src_format().load(ctx)
 
-    def _from_dict(self, res: dict) -> str:
-        return self.target.parse(res)
+    def _from_internal(self, internal: t.Any) -> str:
+        return self._target_format().dump(internal)
 
-    def _send_output(self, res: str, file: str) -> None:
+    @staticmethod
+    def _send_output(res: str, file: str) -> None:
         f = open(file, 'x+')
         f.write(res)
 
