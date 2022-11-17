@@ -1,4 +1,3 @@
-# https://qiita.com/ttsubo/items/623f32f9e96cb16d04a4
 import json
 import yaml
 import datetime
@@ -35,10 +34,17 @@ class Format:
 
 
 class Former:
-    def __init__(self, src, target, context=None, src_path=None, target_path=None):
+    def __init__(
+            self,
+            src,
+            target,
+            context=None,
+            src_path=None,
+            target_path=None
+    ):
+        # TODO: self.src = src_dict[input_format]
         self.src = src()
         self.target = target()
-        self.context = context
         self.src_path = src_path
         self.target_path = target_path
 
@@ -71,16 +77,4 @@ class Former:
 
 
 if __name__ == '__main__':
-    # in_name = 'assets/sample01.json'
-    in_name = './assets/result-2022-11-03 05:23:37.yaml'
-    dt = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    # out_name = f'assets/result-{dt}.yaml'
-    out_name = f'assets/result-{dt}.json'
-
-    f = Former(
-        Format.Yaml,
-        Format.Json,
-        src_path=in_name,
-        target_path=out_name
-    )
-    print(f.form())
+    pass

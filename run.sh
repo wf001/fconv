@@ -1,1 +1,1 @@
-python ${1}
+pytest --capture=no
