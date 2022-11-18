@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
 import json
+from abc import ABC, abstractmethod
+
 import yaml
 
 
@@ -36,14 +37,12 @@ class AbstractFormat(ABC):
 
 
 class Format:
-
     class Json(AbstractFormat):
-
         def _gen_input_kwargs(self, src_ctx, opt):
-            return super().gen_input_kwargs(src_ctx, opt, 's')
+            return super().gen_input_kwargs(src_ctx, opt, "s")
 
         def _gen_output_kwargs(self, internal, opt):
-            return super().gen_output_kwargs(internal, opt, 'obj')
+            return super().gen_output_kwargs(internal, opt, "obj")
 
         @staticmethod
         def load(src_ctx: dict) -> dict:
@@ -54,13 +53,12 @@ class Format:
             return json.dumps(**internal)
 
     class Yaml(AbstractFormat):
-
         def _gen_input_kwargs(self, src_ctx, opt):
-            return super().gen_input_kwargs(src_ctx, opt, 'stream')
+            return super().gen_input_kwargs(src_ctx, opt, "stream")
 
         def _gen_output_kwargs(self, internal, opt):
-            _opt = super().gen_output_kwargs(internal, opt, 'data')
-            _opt['Dumper'] = yaml.CDumper
+            _opt = super().gen_output_kwargs(internal, opt, "data")
+            _opt["Dumper"] = yaml.CDumper
             return _opt
 
         def load(self, src_ctx: dict) -> dict:
@@ -69,5 +67,5 @@ class Format:
         def dump(self, internal: dict) -> str:
             return yaml.dump(**internal)
 
-    class XML():
+    class XML:
         pass

@@ -1,16 +1,17 @@
-from src.format import AbstractFormat
 import typing as t
+
+from src.format import AbstractFormat
 
 
 class Former:
     def __init__(
-            self,
-            src_format,
-            target_format,
-            src_path: t.Optional[str] = None,
-            target_path: t.Optional[str] = None,
-            in_opt: t.Optional[dict] = None,
-            out_opt: t.Optional[dict] = None
+        self,
+        src_format,
+        target_format,
+        src_path: t.Optional[str] = None,
+        target_path: t.Optional[str] = None,
+        in_opt: t.Optional[dict] = None,
+        out_opt: t.Optional[dict] = None,
     ):
         # TODO: self.src = src_dict[input_format]
         self._src_format = src_format
@@ -18,7 +19,7 @@ class Former:
 
         if not self.is_valid_format:
             raise ValueError(
-                f'Invalid format. expect: {AbstractFormat._get_valid_format()}'
+                f"Invalid format. expect: {AbstractFormat._get_valid_format()}"
             )
 
         self.src_path = src_path
@@ -28,16 +29,16 @@ class Former:
 
     @property
     def is_valid_format(self) -> bool:
-        return issubclass(self._src_format, AbstractFormat) and \
-            issubclass(self._target_format, AbstractFormat)
+        return issubclass(self._src_format, AbstractFormat) and issubclass(
+            self._target_format, AbstractFormat
+        )
 
     def form(self, src_ctx: str = "") -> str:
         if self.src_path and not src_ctx:
             src_ctx = self._read_file(self.src_path)
 
         target_ctx = self._from_internal(
-            self._to_internal(src_ctx, self.in_opt),
-            self.out_opt
+            self._to_internal(src_ctx, self.in_opt), self.out_opt
         )
 
         if self.target_path:
@@ -62,9 +63,9 @@ class Former:
 
     @staticmethod
     def _write_file(ctx: str, fname: str) -> None:
-        f = open(fname, 'x+')
+        f = open(fname, "x+")
         f.write(ctx)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
