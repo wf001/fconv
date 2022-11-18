@@ -30,6 +30,10 @@ class AbstractFormat(ABC):
         _opt[k] = internal
         return _opt
 
+    @classmethod
+    def _get_valid_format(cls):
+        return list(map(lambda x: x.__name__, cls.__subclasses__()))
+
 
 class Format:
 

@@ -17,7 +17,9 @@ class Former:
         self._target_format = target_format
 
         if not self.is_valid_format:
-            raise ValueError('Invalid format. expect: [JSON, YAML]')
+            raise ValueError(
+                f'Invalid format. expect: {AbstractFormat._get_valid_format()}'
+            )
 
         self.src_path = src_path
         self.target_path = target_path

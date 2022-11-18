@@ -110,7 +110,7 @@ class TestFormerUnit:
                 src_path=in_name,
                 target_path=out_name
             )
-        assert str(e.value) == "Invalid format. expect: [JSON, YAML]"
+        assert str(e.value).startswith("Invalid format. expect")
 
     def test_to_internal(self, mocker):
         in_name = 'dummy.json'
@@ -175,3 +175,4 @@ class TestFormerUnit:
         assert m_gen_out.call_args[0][1] == opt
         assert m_dump.called_once
         assert m_dump.call_args[0][0] == ctx2
+
