@@ -5,11 +5,11 @@ import yaml
 
 class AbstractFormat(ABC):
     @abstractmethod
-    def load(self):
+    def load(self, src_ctx: dict) -> dict:
         pass
 
     @abstractmethod
-    def dump(self):
+    def dump(self, internal: dict) -> str:
         pass
 
     @abstractmethod

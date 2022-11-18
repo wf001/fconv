@@ -3,3 +3,6 @@ install:
 
 test:
 	pytest --capture=no -vv
+
+lint:
+	mypy src/*.py

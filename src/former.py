@@ -5,8 +5,8 @@ import typing as t
 class Former:
     def __init__(
             self,
-            src_format: AbstractFormat = None,
-            target_format: AbstractFormat = None,
+            src_format,
+            target_format,
             src_path: t.Optional[str] = None,
             target_path: t.Optional[str] = None,
             in_opt: t.Optional[dict] = None,
@@ -27,11 +27,11 @@ class Former:
         self.out_opt = out_opt
 
     @property
-    def is_valid_format(self):
+    def is_valid_format(self) -> bool:
         return issubclass(self._src_format, AbstractFormat) and \
             issubclass(self._target_format, AbstractFormat)
 
-    def form(self, src_ctx: str = None) -> str:
+    def form(self, src_ctx: str = "") -> str:
         if self.src_path and not src_ctx:
             src_ctx = self._read_file(self.src_path)
 
