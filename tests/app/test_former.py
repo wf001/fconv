@@ -1,4 +1,5 @@
-from src.former import Former, Format
+from src.former import Former
+from src.format import Format
 import yaml
 import json
 import os
@@ -15,13 +16,12 @@ class TestFormer:
         dt = datetime.datetime.now().strftime('%Y%m%d-%H:%M:%S')
         out_name = f'assets/{dt}.yaml'
 
-        f = Former(
+        Former(
             src_format=Format.Json,
             target_format=Format.Yaml,
             src_path=in_name,
             target_path=out_name
-        )
-        f.form()
+        ).form()
 
         # testing
         with open(out_name) as f:
@@ -37,13 +37,12 @@ class TestFormer:
         dt = datetime.datetime.now().strftime('%Y%m%d-%H:%M:%S')
         out_name = f'assets/{dt}.json'
 
-        g = Former(
+        Former(
             Format.Yaml,
             Format.Json,
             src_path=in_name,
             target_path=out_name
-        )
-        g.form()
+        ).form()
 
         # testing
         with open(out_name) as f:

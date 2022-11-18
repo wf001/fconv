@@ -1,4 +1,5 @@
-from src.former import Former, Format, AbstractFormat
+from src.former import Former
+from src.format import Format, AbstractFormat
 import pytest
 
 
@@ -7,6 +8,12 @@ class TestConcreteFormat(AbstractFormat):
         pass
 
     def dump(self, internal: dict) -> str:
+        pass
+
+    def _gen_input_kwargs(self, ctx, opt, k):
+        pass
+
+    def _gen_output_kwargs(self, ctx, opt):
         pass
 
 
@@ -66,10 +73,10 @@ class TestFormerUnit:
         Whether function calling inner Former().form() was current.
         """
 
-        m_get = mocker.patch('src.former.Former._get_input')
+        m_get = mocker.patch('src.former.Former._read_file')
         m_to = mocker.patch('src.former.Former._to_internal')
         m_from = mocker.patch('src.former.Former._from_internal')
-        m_send = mocker.patch('src.former.Former._send_output')
+        m_send = mocker.patch('src.former.Former._write_file')
         Former.form()
         assert m_get.called is get_called
         assert m_to.called is True

@@ -1,68 +1,12 @@
-from abc import ABC, abstractmethod
+from src.format import AbstractFormat
 import typing as t
-import json
-import yaml
-
-
-class AbstractFormat(ABC):
-    @abstractmethod
-    def load(self):
-        pass
-
-    @abstractmethod
-    def dump(self):
-        pass
-
-
-class Format:
-
-    class Json(AbstractFormat):
-
-        def _gen_input_kwargs(self, ctx, opt):
-            _opt = opt if opt else {}
-            _opt['s'] = ctx
-            return _opt
-
-        def _gen_output_kwargs(self, ctx, opt):
-            _opt = opt if opt else {}
-            _opt['obj'] = ctx
-            return _opt
-
-        def load(self, src_ctx: dict) -> dict:
-            return json.loads(**src_ctx)
-
-        def dump(self, internal: dict) -> str:
-            return json.dumps(**internal)
-
-    class Yaml(AbstractFormat):
-
-        def _gen_input_kwargs(self, ctx, opt):
-            _opt = opt if opt else {}
-            _opt['stream'] = ctx
-            return _opt
-
-        def _gen_output_kwargs(self, ctx, opt):
-            _opt = opt if opt else {}
-            _opt['data'] = ctx
-            _opt['Dumper'] = yaml.CDumper
-            print(_opt)
-            return _opt
-
-        def load(self, ctx: dict) -> dict:
-            return yaml.safe_load(**ctx)
-
-        def dump(self, internal: dict) -> str:
-            return yaml.dump(**internal)
-
-    class XML():
-        pass
 
 
 class Former:
     def __init__(
             self,
-            src_format: object = None,
-            target_format: object = None,
+            src_format: AbstractFormat = None,
+            target_format: AbstractFormat = None,
             src_path: t.Optional[str] = None,
             target_path: t.Optional[str] = None,
             in_opt: t.Optional[dict] = None,
@@ -87,7 +31,7 @@ class Former:
 
     def form(self, src_ctx: str = None) -> str:
         if self.src_path and not src_ctx:
-            src_ctx = self._get_input(self.src_path)
+            src_ctx = self._read_file(self.src_path)
 
         target_ctx = self._from_internal(
             self._to_internal(src_ctx, self.in_opt),
@@ -95,27 +39,27 @@ class Former:
         )
 
         if self.target_path:
-            self._send_output(target_ctx, self.target_path)
+            self._write_file(target_ctx, self.target_path)
 
         return target_ctx
 
-    @staticmethod
-    def _get_input(fname: str) -> str:
-        with open(fname) as f:
-            return f.read()
-
-    def _to_internal(self, ctx: str, opt: dict) -> t.Any:
+    def _to_internal(self, ctx: str, opt: t.Optional[dict]) -> t.Any:
         _s = self._src_format()
         ctx = _s._gen_input_kwargs(ctx, opt)
         return _s.load(ctx)
 
-    def _from_internal(self, internal: t.Any, opt: dict) -> str:
+    def _from_internal(self, internal: t.Any, opt: t.Optional[dict]) -> str:
         _t = self._target_format()
         internal = _t._gen_output_kwargs(internal, opt)
         return _t.dump(internal)
 
     @staticmethod
-    def _send_output(ctx: str, fname: str) -> None:
+    def _read_file(fname: str) -> str:
+        with open(fname) as f:
+            return f.read()
+
+    @staticmethod
+    def _write_file(ctx: str, fname: str) -> None:
         f = open(fname, 'x+')
         f.write(ctx)
 
