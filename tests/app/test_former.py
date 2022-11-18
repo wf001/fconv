@@ -15,12 +15,13 @@ class TestFormer:
         dt = datetime.datetime.now().strftime('%Y%m%d-%H:%M:%S')
         out_name = f'assets/{dt}.yaml'
 
-        Former(
+        f = Former(
             src_format=Format.Json,
             target_format=Format.Yaml,
             src_path=in_name,
             target_path=out_name
-        ).form()
+        )
+        f.form()
 
         # testing
         with open(out_name) as f:
@@ -36,16 +37,16 @@ class TestFormer:
         dt = datetime.datetime.now().strftime('%Y%m%d-%H:%M:%S')
         out_name = f'assets/{dt}.json'
 
-        Former(
+        g = Former(
             Format.Yaml,
             Format.Json,
             src_path=in_name,
             target_path=out_name
-        ).form()
+        )
+        g.form()
 
         # testing
         with open(out_name) as f:
             act = json.loads(f.read())
             assert act['country'] == 'Japan'
         os.remove(out_name)
-

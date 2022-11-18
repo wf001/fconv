@@ -1,7 +1,7 @@
-import json
-import yaml
 from abc import ABC, abstractmethod
 import typing as t
+import json
+import yaml
 
 
 class AbstractFormat(ABC):
@@ -17,59 +17,42 @@ class AbstractFormat(ABC):
 class Format:
 
     class Json(AbstractFormat):
-        def __init__(self, **kwargs):
-            # FIXME: Nice to modify to keyword argument based passing.
-            # load opt
-            self.cls = kwargs.get('cls', None)
-            self.object_hook = kwargs.get('object_hook', None)
-            self.parse_float = kwargs.get('parse_float', None)
-            self.parse_int = kwargs.get('parse_int', None)
-            self.parse_constant = kwargs.get('parse_constant', None)
-            self.object_pairs_hook = kwargs.get('object_pairs_hook', None)
-            # dump opt
-            self.skipkeys = kwargs.get('skipkeys', False)
-            self.ensure_ascii = kwargs.get('ensure_ascii', True)
-            self.check_circular = kwargs.get('check_circular', True)
-            self.allow_nan = kwargs.get('allow_nan', True)
-            self.cls = kwargs.get('cls', None)
-            self.indent = kwargs.get('indent', None)
-            self.separators = kwargs.get('separators', None)
-            self.default = kwargs.get('default', None)
-            self.sort_keys = kwargs.get('sort_keys', False)
 
-        def load(self, src_ctx: str) -> dict:
-            # FIXME: Nice to modify to keyword argument based passing.
-            return json.loads(
-                src_ctx,
-                cls=self.cls,
-                object_hook=self.object_hook,
-                parse_float=self.parse_float,
-                parse_int=self.parse_int,
-                parse_constant=self.parse_constant,
-                object_pairs_hook=self.object_pairs_hook
-            )
+        def _gen_input_kwargs(self, ctx, opt):
+            _opt = opt if opt else {}
+            _opt['s'] = ctx
+            return _opt
+
+        def _gen_output_kwargs(self, ctx, opt):
+            _opt = opt if opt else {}
+            _opt['obj'] = ctx
+            return _opt
+
+        def load(self, src_ctx: dict) -> dict:
+            return json.loads(**src_ctx)
 
         def dump(self, internal: dict) -> str:
-            # FIXME: Nice to modify to keyword argument based passing.
-            return json.dumps(
-                internal,
-                skipkeys=self.skipkeys,
-                ensure_ascii=self.ensure_ascii,
-                check_circular=self.check_circular,
-                allow_nan=self.allow_nan,
-                cls=self.cls,
-                indent=self.indent,
-                separators=self.separators,
-                default=self.default,
-                sort_keys=self.sort_keys
-            )
+            return json.dumps(**internal)
 
     class Yaml(AbstractFormat):
-        def load(self, str: str) -> dict:
-            return yaml.safe_load(str)
+
+        def _gen_input_kwargs(self, ctx, opt):
+            _opt = opt if opt else {}
+            _opt['stream'] = ctx
+            return _opt
+
+        def _gen_output_kwargs(self, ctx, opt):
+            _opt = opt if opt else {}
+            _opt['data'] = ctx
+            _opt['Dumper'] = yaml.CDumper
+            print(_opt)
+            return _opt
+
+        def load(self, ctx: dict) -> dict:
+            return yaml.safe_load(**ctx)
 
         def dump(self, internal: dict) -> str:
-            return yaml.dump(internal, Dumper=yaml.CDumper)
+            return yaml.dump(**internal)
 
     class XML():
         pass
@@ -81,7 +64,9 @@ class Former:
             src_format: object = None,
             target_format: object = None,
             src_path: t.Optional[str] = None,
-            target_path: t.Optional[str] = None
+            target_path: t.Optional[str] = None,
+            in_opt: t.Optional[dict] = None,
+            out_opt: t.Optional[dict] = None
     ):
         # TODO: self.src = src_dict[input_format]
         self._src_format = src_format
@@ -92,6 +77,8 @@ class Former:
 
         self.src_path = src_path
         self.target_path = target_path
+        self.in_opt = in_opt
+        self.out_opt = out_opt
 
     @property
     def is_valid_format(self):
@@ -102,7 +89,10 @@ class Former:
         if self.src_path and not src_ctx:
             src_ctx = self._get_input(self.src_path)
 
-        target_ctx = self._from_internal(self._to_internal(src_ctx))
+        target_ctx = self._from_internal(
+            self._to_internal(src_ctx, self.in_opt),
+            self.out_opt
+        )
 
         if self.target_path:
             self._send_output(target_ctx, self.target_path)
@@ -114,11 +104,15 @@ class Former:
         with open(fname) as f:
             return f.read()
 
-    def _to_internal(self, ctx: str) -> t.Any:
-        return self._src_format().load(ctx)
+    def _to_internal(self, ctx: str, opt: dict) -> t.Any:
+        _s = self._src_format()
+        ctx = _s._gen_input_kwargs(ctx, opt)
+        return _s.load(ctx)
 
-    def _from_internal(self, internal: t.Any) -> str:
-        return self._target_format().dump(internal)
+    def _from_internal(self, internal: t.Any, opt: dict) -> str:
+        _t = self._target_format()
+        internal = _t._gen_output_kwargs(internal, opt)
+        return _t.dump(internal)
 
     @staticmethod
     def _send_output(ctx: str, fname: str) -> None:
