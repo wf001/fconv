@@ -2,6 +2,8 @@ import typing as t
 
 from src.format import AbstractFormat
 
+from .typing import InternalValue
+
 
 class Former:
     def __init__(
@@ -46,12 +48,12 @@ class Former:
 
         return target_ctx
 
-    def _to_internal(self, ctx: str, opt: t.Optional[dict]) -> t.Any:
+    def _to_internal(self, ctx: str, opt: t.Optional[dict]) -> InternalValue:
         _s = self._src_format()
         ctx = _s._gen_input_kwargs(ctx, opt)
         return _s.load(ctx)
 
-    def _from_internal(self, internal: t.Any, opt: t.Optional[dict]) -> str:
+    def _from_internal(self, internal: InternalValue, opt: t.Optional[dict]) -> str:
         _t = self._target_format()
         internal = _t._gen_output_kwargs(internal, opt)
         return _t.dump(internal)

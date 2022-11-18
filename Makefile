@@ -5,4 +5,7 @@ test:
 	pytest --capture=no -vv
 
 lint:
-	mypy ./src && black ./src
+	make mypy-only && black ./src && isort ./src
+
+mypy-only:
+	mypy ./src
