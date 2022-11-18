@@ -49,21 +49,3 @@ class TestFormer:
             assert act['country'] == 'Japan'
         os.remove(out_name)
 
-    def test_form_exception_not_inherited(self):
-        """
-        Raise exception when source format or target format isn't 
-        concrete class of AbstractFormat
-        """
-        class DummyClass:
-            pass
-        in_name = 'assets/sample01.yaml'
-        dt = datetime.datetime.now().strftime('%Y%m%d-%H:%M:%S')
-        out_name = f'assets/{dt}.json'
-
-        with pytest.raises(Exception):
-            Former(
-                DummyClass,
-                Format.Json,
-                src_path=in_name,
-                target_path=out_name
-            )

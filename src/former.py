@@ -18,14 +18,14 @@ class Format:
 
     class Json(AbstractFormat):
         def __init__(self, **kwargs):
+            # FIXME: Nice to modify to keyword argument based passing.
             # load opt
             self.cls = kwargs.get('cls', None)
             self.object_hook = kwargs.get('object_hook', None)
             self.parse_float = kwargs.get('parse_float', None)
             self.parse_int = kwargs.get('parse_int', None)
             self.parse_constant = kwargs.get('parse_constant', None)
-            self.object_pairs_hook = kwargs.get(
-                'object_pairs_hook', None)
+            self.object_pairs_hook = kwargs.get('object_pairs_hook', None)
             # dump opt
             self.skipkeys = kwargs.get('skipkeys', False)
             self.ensure_ascii = kwargs.get('ensure_ascii', True)
@@ -38,6 +38,7 @@ class Format:
             self.sort_keys = kwargs.get('sort_keys', False)
 
         def load(self, src_ctx: str) -> dict:
+            # FIXME: Nice to modify to keyword argument based passing.
             return json.loads(
                 src_ctx,
                 cls=self.cls,
@@ -49,6 +50,7 @@ class Format:
             )
 
         def dump(self, internal: dict) -> str:
+            # FIXME: Nice to modify to keyword argument based passing.
             return json.dumps(
                 internal,
                 skipkeys=self.skipkeys,
@@ -86,7 +88,7 @@ class Former:
         self._target_format = target_format
 
         if not self.is_valid_format:
-            raise Exception
+            raise ValueError('Invalid format. expect: [JSON, YAML]')
 
         self.src_path = src_path
         self.target_path = target_path

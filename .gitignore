@@ -1,5 +1,7 @@
+**/run.sh
 assets/**.yaml
 assets/**.json
+
 **/.venv*
 **/.env*
 **/__pycache__
