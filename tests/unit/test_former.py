@@ -138,15 +138,15 @@ class TestFormerUnit:
             target_format=TestConcreteFormat,
         )._to_internal(ctx=ctx1, opt=opt)
 
-        assert m_gen_in.called_once
-        assert m_gen_in.call_args[0][0] == ctx1
-        assert m_gen_in.call_args[0][1] == opt
-        assert m_load.called_once
-        assert m_load.call_args[0][0] == ctx2
+        act_called_args1, _ = m_gen_in.call_args
+        act_called_args2, _ = m_load.call_args
+        assert m_gen_in.call_count == 1
+        assert act_called_args1[0] == ctx1
+        assert act_called_args1[1] == opt
+        assert m_load.call_count == 1
+        assert act_called_args2[0] == ctx2
 
     def test_from_internal(self, mocker):
-        in_name = 'dummy.json'
-        out_name = 'dummy.yaml'
 
         mocker.patch('src.former.Former._read_file')
         mocker.patch('src.former.Former._to_internal')
@@ -170,9 +170,10 @@ class TestFormerUnit:
             target_format=TestConcreteFormat,
         )._from_internal(internal=ctx1, opt=opt)
 
-        assert m_gen_out.called_once
-        assert m_gen_out.call_args[0][0] == ctx1
-        assert m_gen_out.call_args[0][1] == opt
-        assert m_dump.called_once
-        assert m_dump.call_args[0][0] == ctx2
-
+        act_called_args1, _ = m_gen_out.call_args
+        act_called_args2, _ = m_dump.call_args
+        assert m_gen_out.call_count == 1
+        assert act_called_args1[0] == ctx1
+        assert act_called_args1[1] == opt
+        assert m_dump.call_count == 1
+        assert act_called_args2[0] == ctx2

@@ -1,4 +1,5 @@
-from src.former import Former, Format
+from src.former import Former
+from src.format import Format
 import datetime
 
 in_name = 'assets/sample01.json'
@@ -9,7 +10,8 @@ res = Former(
     Format.Json,
     Format.Yaml,
     src_path=in_name,
-    target_path=out_name
+    target_path=out_name,
+    out_opt={'indent': 3}
 ).form()
 
 print(out_name, res, sep="\n")
@@ -23,7 +25,7 @@ res = Former(
     Format.Json,
     src_path=in_name,
     target_path=out_name,
-    out_opt={'indent': 1}
+    out_opt={'indent': 3}
 ).form()
 
 print(out_name, res, sep="\n")

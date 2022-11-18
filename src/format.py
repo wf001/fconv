@@ -45,10 +45,12 @@ class Format:
         def _gen_output_kwargs(self, internal, opt):
             return super().gen_output_kwargs(internal, opt, 'obj')
 
-        def load(self, src_ctx: dict) -> dict:
+        @staticmethod
+        def load(src_ctx: dict) -> dict:
             return json.loads(**src_ctx)
 
-        def dump(self, internal: dict) -> str:
+        @staticmethod
+        def dump(internal: dict) -> str:
             return json.dumps(**internal)
 
     class Yaml(AbstractFormat):
