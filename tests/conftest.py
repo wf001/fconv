@@ -1,4 +1,3 @@
-from src.former import AbstractFormat
 import pytest
 
-
+from src.former import AbstractFormat
