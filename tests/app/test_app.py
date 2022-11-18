@@ -49,3 +49,4 @@ class TestFormer:
             act = json.loads(f.read())
             assert act['country'] == 'Japan'
         os.remove(out_name)
+

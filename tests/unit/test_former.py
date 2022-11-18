@@ -1,6 +1,8 @@
 from src.former import Former
-from src.format import Format, AbstractFormat
+from unittest.mock import MagicMock
+from src.format import AbstractFormat
 import pytest
+import json
 
 
 class TestConcreteFormat(AbstractFormat):
@@ -95,7 +97,7 @@ class TestFormerUnit:
             target_format
     ):
         """
-        Raise exception when source format or target format isn't 
+        Raise exception when source format or target format isn't
         concrete class of AbstractFormat
         """
         in_name = 'dummy.json'
@@ -109,3 +111,67 @@ class TestFormerUnit:
                 target_path=out_name
             )
         assert str(e.value) == "Invalid format. expect: [JSON, YAML]"
+
+    def test_to_internal(self, mocker):
+        in_name = 'dummy.json'
+        out_name = 'dummy.yaml'
+
+        mocker.patch('src.former.Former._read_file')
+        mocker.patch('src.former.Former._from_internal')
+        mocker.patch('src.former.Former._write_file')
+        ctx1 = '{key1:value1,key2:value2}'
+        opt = {'indent': 1, 'parse_int': float}
+        ctx2 = {'key1': 'value1', 'key2': 'value2', 'key3': 'value3'}
+        m_gen_in = mocker.patch.object(
+            TestConcreteFormat,
+            '_gen_input_kwargs',
+            MagicMock(return_value=ctx2)
+        )
+        m_load = mocker.patch.object(
+            TestConcreteFormat,
+            'load',
+            MagicMock()
+        )
+
+        Former(
+            src_format=TestConcreteFormat,
+            target_format=TestConcreteFormat,
+        )._to_internal(ctx=ctx1, opt=opt)
+
+        assert m_gen_in.called_once
+        assert m_gen_in.call_args[0][0] == ctx1
+        assert m_gen_in.call_args[0][1] == opt
+        assert m_load.called_once
+        assert m_load.call_args[0][0] == ctx2
+
+    def test_from_internal(self, mocker):
+        in_name = 'dummy.json'
+        out_name = 'dummy.yaml'
+
+        mocker.patch('src.former.Former._read_file')
+        mocker.patch('src.former.Former._to_internal')
+        mocker.patch('src.former.Former._write_file')
+        ctx1 = {'key1': 'value1', 'key2': 'value2', 'key3': 'value3'}
+        ctx2 = '{key1:value1,key2:value2}'
+        opt = {'indent': 1, 'parse_int': float}
+        m_gen_out = mocker.patch.object(
+            TestConcreteFormat,
+            '_gen_output_kwargs',
+            MagicMock(return_value=ctx2)
+        )
+        m_dump = mocker.patch.object(
+            TestConcreteFormat,
+            'dump',
+            MagicMock()
+        )
+
+        Former(
+            src_format=TestConcreteFormat,
+            target_format=TestConcreteFormat,
+        )._from_internal(internal=ctx1, opt=opt)
+
+        assert m_gen_out.called_once
+        assert m_gen_out.call_args[0][0] == ctx1
+        assert m_gen_out.call_args[0][1] == opt
+        assert m_dump.called_once
+        assert m_dump.call_args[0][0] == ctx2
