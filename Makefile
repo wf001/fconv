@@ -1,11 +1,17 @@
+TARGET = ./src ./tests
+
 install:
-	pip install -e requirement.txt
+	pip install -r requirement.txt
 
 test:
 	pytest --capture=no -vv
 
 lint:
-	make mypy-only && black ./src ./tests && isort ./src ./tests
+	make mypy-only && \
+		black ${TARGET} && \
+		isort ${TARGET} &&\
+		flake8 ${TARGET} --doctest
+
 
 mypy-only:
-	mypy ./src
+	mypy ${TARGET}
