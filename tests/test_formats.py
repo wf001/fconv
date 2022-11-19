@@ -51,5 +51,5 @@ class TestFormatsUnit:
             m_super_gen_input = mocker.patch.object(
                 BaseFormat, "get_dump_kwargs", MagicMock()
             )
-            Json().get_dump_kwargs("ctx", {})
+            Json().get_dump_kwargs({}, {})
             assert m_super_gen_input.call_count == 1
