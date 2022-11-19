@@ -1,38 +1,39 @@
 import json
 from abc import ABC, abstractmethod
+from typing import Any, Dict
 
 import yaml
-
-from .typing import InternalValue
 
 
 class AbstractFormat(ABC):
     def __init__(self, input_data_key, output_data_key):
-        self.__input_data_key = input_data_key
-        self.__output_data_key = output_data_key
+        self._input_data_key = input_data_key
+        self._output_data_key = output_data_key
 
     @property
+    @abstractmethod
     def input_data_key(self):
-        return self.__input_data_key
+        return self._input_data_key
 
     @property
+    @abstractmethod
     def output_data_key(self):
-        return self.__output_data_key
+        return self._output_data_key
 
     @abstractmethod
-    def load(self, src_ctx: dict) -> InternalValue:
+    def load(self, src_ctx: Dict[str, Any]) -> Dict[str, Any]:
         pass
 
     @abstractmethod
-    def dump(self, internal: InternalValue) -> str:
+    def dump(self, internal: Dict[str, Any]) -> str:
         pass
 
-    def gen_input_kwargs(self, src_ctx: str, opt: dict):
+    def gen_input_kwargs(self, src_ctx: str, opt: Dict[str, Any]):
         _opt = opt if opt else {}
         _opt[self.input_data_key] = src_ctx
         return _opt
 
-    def gen_output_kwargs(self, internal: InternalValue, opt: dict):
+    def gen_output_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
         _opt = opt if opt else {}
         _opt[self.output_data_key] = internal
         return _opt
@@ -44,33 +45,43 @@ class AbstractFormat(ABC):
 
 class Format:
     class Json(AbstractFormat):
-        INPUT_DATA_KEY = "s"
-        OUTPUT_DATA_KEY = "obj"
-
         def __init__(self):
-            super().__init__(self.INPUT_DATA_KEY, self.OUTPUT_DATA_KEY)
+            super().__init__(self.input_data_key, self.output_data_key)
+
+        @property
+        def input_data_key(self):
+            return "s"
+
+        @property
+        def output_data_key(self):
+            return "obj"
 
         @staticmethod
-        def load(src_ctx: dict) -> InternalValue:
+        def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
             return json.loads(**src_ctx)
 
         @staticmethod
-        def dump(internal: InternalValue) -> str:
+        def dump(internal: Dict[str, Any]) -> str:
             return json.dumps(**internal)
 
     class Yaml(AbstractFormat):
-        INPUT_DATA_KEY = "stream"
-        OUTPUT_DATA_KEY = "data"
-
         def __init__(self):
-            super().__init__(self.INPUT_DATA_KEY, self.OUTPUT_DATA_KEY)
+            super().__init__(self.input_data_key, self.output_data_key)
+
+        @property
+        def input_data_key(self):
+            return "stream"
+
+        @property
+        def output_data_key(self):
+            return "data"
 
         @staticmethod
-        def load(src_ctx: dict) -> InternalValue:
+        def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
             return yaml.safe_load(**src_ctx)
 
         @staticmethod
-        def dump(internal: InternalValue) -> str:
+        def dump(internal: Dict[str, Any]) -> str:
             return yaml.dump(**internal)
 
     class XML:

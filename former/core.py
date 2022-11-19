@@ -1,7 +1,7 @@
 import typing as t
+from typing import Any, Dict
 
 from .format import AbstractFormat
-from .typing import InternalValue
 
 
 class Former:
@@ -9,12 +9,12 @@ class Former:
         self,
         src_format,
         target_format,
-        src_path: t.Optional[str] = None,
-        target_path: t.Optional[str] = None,
-        in_opt: t.Optional[dict] = None,
-        out_opt: t.Optional[dict] = None,
+        src_path: t.Optional[str] = "",
+        target_path: t.Optional[str] = "",
+        in_opt: t.Optional[Dict[str, Any]] = None,
+        out_opt: t.Optional[Dict[str, Any]] = None,
     ):
-        # TODO: self.src = src_dict[input_format]
+        # TODO: self.src = src_Dict[str,Any][input_format]
         self._src_format = src_format
         self._target_format = target_format
 
@@ -47,11 +47,11 @@ class Former:
 
         return target_ctx
 
-    def _to_internal(self, ctx: str, opt: t.Optional[dict]) -> InternalValue:
+    def _to_internal(self, ctx: str, opt: t.Optional[Dict[str, Any]]) -> Any:
         _s = self._src_format()
         return _s.load(_s.gen_input_kwargs(ctx, opt))
 
-    def _from_internal(self, internal: InternalValue, opt: t.Optional[dict]) -> str:
+    def _from_internal(self, internal: Any, opt: t.Optional[Dict[str, Any]]) -> str:
         _t = self._target_format()
         return _t.dump(_t.gen_output_kwargs(internal, opt))
 
@@ -64,7 +64,3 @@ class Former:
     def _write_file(ctx: str, fname: str) -> None:
         f = open(fname, "x+")
         f.write(ctx)
-
-
-if __name__ == "__main__":
-    pass
