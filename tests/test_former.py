@@ -5,7 +5,7 @@ import os
 import yaml
 
 from former.core import Former
-from former.format import Format
+from former.format import Json, Yaml
 
 from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
 
@@ -18,8 +18,8 @@ def test_form_json_file_to_yaml_file():
     out_name = f"{dt}.yaml"
 
     Former(
-        src_format=Format.Json,
-        target_format=Format.Yaml,
+        src_format=Json,
+        target_format=Yaml,
         src_path=JSON_FILE_PATH,
         target_path=out_name,
     ).form()
@@ -42,8 +42,8 @@ def test_form_json_file_to_yaml_file_with_opt():
     out_name = f"{dt}.yaml"
 
     Former(
-        src_format=Format.Json,
-        target_format=Format.Yaml,
+        src_format=Json,
+        target_format=Yaml,
         src_path=JSON_FILE_PATH,
         target_path=out_name,
         in_opt={"parse_int": float},
@@ -67,9 +67,7 @@ def test_form_yaml_file_to_json_file():
     dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
     out_name = f"{dt}.json"
 
-    Former(
-        Format.Yaml, Format.Json, src_path=YAML_FILE_PATH, target_path=out_name
-    ).form()
+    Former(Yaml, Json, src_path=YAML_FILE_PATH, target_path=out_name).form()
 
     # testing
     with open(out_name) as f:
@@ -89,8 +87,8 @@ def test_form_yaml_file_to_json_file_with_opt():
     out_name = f"{dt}.json"
 
     Former(
-        Format.Yaml,
-        Format.Json,
+        Yaml,
+        Json,
         src_path=YAML_FILE_PATH,
         target_path=out_name,
         out_opt={"indent": 3},

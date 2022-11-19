@@ -1,23 +1,23 @@
 from pathlib import Path
 from typing import Any, Dict
 
-from former.format import AbstractFormat
+from former.format import BaseFormat
 
 FIXTURES_ROOT = Path(__file__).parent
 JSON_FILE_PATH = FIXTURES_ROOT / "test.json"
 YAML_FILE_PATH = FIXTURES_ROOT / "test.yaml"
 
 
-class FakeValidFormat(AbstractFormat):
+class FakeValidFormat(BaseFormat):
     def __init__(self):
-        super().__init__(self.input_data_key, self.output_data_key)
+        super().__init__(self.load_data_key, self.dump_data_key)
 
     @property
-    def input_data_key(self):
+    def load_data_key(self):
         return "fake"
 
     @property
-    def output_data_key(self):
+    def dump_data_key(self):
         return "fake"
 
     def load(self, str: Dict[str, Any]) -> Dict[str, Any]:

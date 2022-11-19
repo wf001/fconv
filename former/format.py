@@ -6,83 +6,86 @@ import yaml
 
 
 class AbstractFormat(ABC):
-    def __init__(self, input_data_key, output_data_key):
-        self._input_data_key = input_data_key
-        self._output_data_key = output_data_key
+    def __init__(self, load_data_key, dump_data_key):
+        self._load_data_key = load_data_key
+        self._dump_data_key = dump_data_key
 
     @property
     @abstractmethod
-    def input_data_key(self):
-        return self._input_data_key
+    def load_data_key(self):
+        return self._load_data_key
 
     @property
     @abstractmethod
-    def output_data_key(self):
-        return self._output_data_key
+    def dump_data_key(self):
+        return self._dump_data_key
 
     @abstractmethod
     def load(self, src_ctx: Dict[str, Any]) -> Dict[str, Any]:
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def dump(self, internal: Dict[str, Any]) -> str:
-        pass
-
-    def gen_input_kwargs(self, src_ctx: str, opt: Dict[str, Any]):
-        _opt = opt if opt else {}
-        _opt[self.input_data_key] = src_ctx
-        return _opt
-
-    def gen_output_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
-        _opt = opt if opt else {}
-        _opt[self.output_data_key] = internal
-        return _opt
+        raise NotImplementedError
 
     @classmethod
     def _get_valid_format(cls):
         return list(map(lambda x: x.__name__, cls.__subclasses__()))
 
 
-class Format:
-    class Json(AbstractFormat):
-        def __init__(self):
-            super().__init__(self.input_data_key, self.output_data_key)
+class BaseFormat(AbstractFormat):
+    def gen_input_kwargs(self, src_ctx: str, opt: Dict[str, Any]):
+        _opt = opt if opt else {}
+        _opt[self.load_data_key] = src_ctx
+        return _opt
 
-        @property
-        def input_data_key(self):
-            return "s"
+    def gen_output_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
+        _opt = opt if opt else {}
+        _opt[self.dump_data_key] = internal
+        return _opt
 
-        @property
-        def output_data_key(self):
-            return "obj"
 
-        @staticmethod
-        def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
-            return json.loads(**src_ctx)
+class Json(BaseFormat):
+    def __init__(self):
+        super().__init__(self.load_data_key, self.dump_data_key)
 
-        @staticmethod
-        def dump(internal: Dict[str, Any]) -> str:
-            return json.dumps(**internal)
+    @property
+    def load_data_key(self):
+        return "s"
 
-    class Yaml(AbstractFormat):
-        def __init__(self):
-            super().__init__(self.input_data_key, self.output_data_key)
+    @property
+    def dump_data_key(self):
+        return "obj"
 
-        @property
-        def input_data_key(self):
-            return "stream"
+    @staticmethod
+    def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
+        return json.loads(**src_ctx)
 
-        @property
-        def output_data_key(self):
-            return "data"
+    @staticmethod
+    def dump(internal: Dict[str, Any]) -> str:
+        return json.dumps(**internal)
 
-        @staticmethod
-        def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
-            return yaml.safe_load(**src_ctx)
 
-        @staticmethod
-        def dump(internal: Dict[str, Any]) -> str:
-            return yaml.dump(**internal)
+class Yaml(BaseFormat):
+    def __init__(self):
+        super().__init__(self.load_data_key, self.dump_data_key)
 
-    class XML:
-        pass
+    @property
+    def load_data_key(self):
+        return "stream"
+
+    @property
+    def dump_data_key(self):
+        return "data"
+
+    @staticmethod
+    def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
+        return yaml.safe_load(**src_ctx)
+
+    @staticmethod
+    def dump(internal: Dict[str, Any]) -> str:
+        return yaml.dump(**internal)
+
+
+class XML:
+    pass
