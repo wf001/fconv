@@ -16,7 +16,7 @@ class TestFormatUnit:
             assert m_loads.called
             assert act_called_kwargs == {"a": "b"}
 
-        def test_handle_load(self, mocker):
+        def test_load_handle_error(self, mocker):
             mocker.patch("json.loads").side_effect = Exception()
             src_ctx = {"a": "b"}
 
@@ -32,7 +32,7 @@ class TestFormatUnit:
             assert m_loads.called
             assert act_called_kwargs == {"a": "b"}
 
-        def test_handle_dump(self, mocker):
+        def test_dump_handle_error(self, mocker):
             mocker.patch("json.dump").side_effect = Exception()
             src_ctx = {"a": "b"}
 
@@ -43,12 +43,12 @@ class TestFormatUnit:
             m_super_gen_input = mocker.patch.object(
                 AbstractFormat, "gen_input_kwargs", MagicMock()
             )
-            Format.Json()._gen_input_kwargs("ctx", {})
+            Format.Json().gen_input_kwargs("ctx", {})
             assert m_super_gen_input.call_count == 1
 
         def test_gen_output_kwargs(self, mocker):
             m_super_gen_input = mocker.patch.object(
                 AbstractFormat, "gen_output_kwargs", MagicMock()
             )
-            Format.Json()._gen_output_kwargs("ctx", {})
+            Format.Json().gen_output_kwargs("ctx", {})
             assert m_super_gen_input.call_count == 1

@@ -52,15 +52,15 @@ def test_form(mocker, Former, get_called, send_called):
     Whether function calling inner Former().form() was current.
     """
 
-    m_get = mocker.patch(f"{MODULE_PATH}._read_file")
+    m_read = mocker.patch(f"{MODULE_PATH}._read_file")
     m_to = mocker.patch(f"{MODULE_PATH}._to_internal")
     m_from = mocker.patch(f"{MODULE_PATH}._from_internal")
-    m_send = mocker.patch(f"{MODULE_PATH}._write_file")
+    m_write = mocker.patch(f"{MODULE_PATH}._write_file")
     Former.form()
-    assert m_get.called is get_called
+    assert m_read.called is get_called
     assert m_to.called is True
     assert m_from.called is True
-    assert m_send.called is send_called
+    assert m_write.called is send_called
 
 
 @pytest.mark.parametrize(
@@ -96,7 +96,7 @@ def test_to_internal(mocker):
     opt = {"indent": 1, "parse_int": float}
     ctx2 = {"key1": "value1", "key2": "value2", "key3": "value3"}
     m_gen_in = mocker.patch.object(
-        FakeValidFormat, "_gen_input_kwargs", MagicMock(return_value=ctx2)
+        FakeValidFormat, "gen_input_kwargs", MagicMock(return_value=ctx2)
     )
     m_load = mocker.patch.object(FakeValidFormat, "load", MagicMock())
 
@@ -123,7 +123,7 @@ def test_from_internal(mocker):
     ctx2 = "{key1:value1,key2:value2}"
     opt = {"indent": 1, "parse_int": float}
     m_gen_out = mocker.patch.object(
-        FakeValidFormat, "_gen_output_kwargs", MagicMock(return_value=ctx2)
+        FakeValidFormat, "gen_output_kwargs", MagicMock(return_value=ctx2)
     )
     m_dump = mocker.patch.object(FakeValidFormat, "dump", MagicMock())
 

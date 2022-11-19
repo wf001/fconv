@@ -7,6 +7,10 @@ from .typing import InternalValue
 
 
 class AbstractFormat(ABC):
+    def __init__(self, input_data_key, output_data_key):
+        self.input_data_key = input_data_key
+        self.output_data_key = output_data_key
+
     @abstractmethod
     def load(self, src_ctx: dict) -> InternalValue:
         pass
@@ -15,22 +19,14 @@ class AbstractFormat(ABC):
     def dump(self, internal: InternalValue) -> str:
         pass
 
-    @abstractmethod
-    def _gen_input_kwargs(self, src_ctx, opt):
-        pass
-
-    @abstractmethod
-    def _gen_output_kwargs(self, internal, opt):
-        pass
-
-    def gen_input_kwargs(self, src_ctx: str, opt: dict, k: str):
+    def gen_input_kwargs(self, src_ctx: str, opt: dict):
         _opt = opt if opt else {}
-        _opt[k] = src_ctx
+        _opt[self.input_data_key] = src_ctx
         return _opt
 
-    def gen_output_kwargs(self, internal: InternalValue, opt: dict, k: str):
+    def gen_output_kwargs(self, internal: InternalValue, opt: dict):
         _opt = opt if opt else {}
-        _opt[k] = internal
+        _opt[self.output_data_key] = internal
         return _opt
 
     @classmethod
@@ -40,6 +36,12 @@ class AbstractFormat(ABC):
 
 class Format:
     class Json(AbstractFormat):
+        INPUT_DATA_KEY = "s"
+        OUTPUT_DATA_KEY = "obj"
+
+        def __init__(self):
+            super().__init__(self.INPUT_DATA_KEY, self.OUTPUT_DATA_KEY)
+
         @staticmethod
         def load(src_ctx: dict) -> InternalValue:
             return json.loads(**src_ctx)
@@ -48,13 +50,13 @@ class Format:
         def dump(internal: InternalValue) -> str:
             return json.dumps(**internal)
 
-        def _gen_input_kwargs(self, src_ctx: str, opt: dict):
-            return super().gen_input_kwargs(src_ctx, opt, "s")
-
-        def _gen_output_kwargs(self, internal: InternalValue, opt: dict):
-            return super().gen_output_kwargs(internal, opt, "obj")
-
     class Yaml(AbstractFormat):
+        INPUT_DATA_KEY = "stream"
+        OUTPUT_DATA_KEY = "data"
+
+        def __init__(self):
+            super().__init__(self.INPUT_DATA_KEY, self.OUTPUT_DATA_KEY)
+
         @staticmethod
         def load(src_ctx: dict) -> InternalValue:
             return yaml.safe_load(**src_ctx)
@@ -62,14 +64,6 @@ class Format:
         @staticmethod
         def dump(internal: InternalValue) -> str:
             return yaml.dump(**internal)
-
-        def _gen_input_kwargs(self, src_ctx, opt):
-            return super().gen_input_kwargs(src_ctx, opt, "stream")
-
-        def _gen_output_kwargs(self, internal, opt):
-            _opt = super().gen_output_kwargs(internal, opt, "data")
-            _opt["Dumper"] = yaml.CDumper
-            return _opt
 
     class XML:
         pass

@@ -9,17 +9,17 @@ YAML_FILE_PATH = FIXTURES_ROOT / "test.yaml"
 
 
 class FakeValidFormat(AbstractFormat):
+    INPUT_DATA_KEY = "fake"
+    OUTPUT_DATA_KEY = "fake"
+
+    def __init__(self):
+        super().__init__(self.INPUT_DATA_KEY, self.OUTPUT_DATA_KEY)
+
     def load(self, str: dict) -> InternalValue:
         return {}  # type: ignore
 
     def dump(self, internal: InternalValue) -> str:
         return ""
-
-    def _gen_input_kwargs(self, ctx, opt, k):
-        pass
-
-    def _gen_output_kwargs(self, ctx, opt):
-        pass
 
 
 class FakeInvalidFormat:
