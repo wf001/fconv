@@ -1,4 +1,3 @@
-import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -93,21 +92,17 @@ class TestFormerUnit:
         Raise exception when source format or target format isn't
         concrete class of AbstractFormat
         """
-        in_name = "dummy.json"
-        out_name = "dummy.yaml"
 
         with pytest.raises(ValueError) as e:
             Former(
                 src_format=src_format,
                 target_format=target_format,
-                src_path=in_name,
-                target_path=out_name,
+                src_path="dummy.json",
+                target_path="dummy.yaml",
             )
         assert str(e.value).startswith("Invalid format. expect")
 
     def test_to_internal(self, mocker):
-        in_name = "dummy.json"
-        out_name = "dummy.yaml"
 
         mocker.patch("src.former.Former._read_file")
         mocker.patch("src.former.Former._from_internal")
