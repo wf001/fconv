@@ -1,38 +1,38 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
-
-from .constants import const
+from typing import Any, Dict, Optional
 
 
-class AbstractFormat(ABC):
-    """Interface for implementing format"""
+def _get_valid_format():
+    return list(map(lambda x: x.__name__, BaseDictionalizeFormat.__subclasses__()))
 
-    def __init__(self, format: str):
-        self.load_data_key = const[format].get("LOAD_DATA_KEY", "") if format else ""
-        self.dump_data_key = const[format].get("DUMP_DATA_KEY", "") if format else ""
+
+class BaseFormat(ABC):
+    """Base class for implementing all the format"""
 
     @abstractmethod
-    def load(self, src_ctx: Dict[str, Any]) -> Dict[str, Any]:
+    def load(self, src_ctx: Any) -> Any:
         raise NotImplementedError()
 
     @abstractmethod
-    def dump(self, internal: Dict[str, Any]) -> str:
+    def dump(self, internal: Any) -> Optional[str]:
         raise NotImplementedError()
 
-    @classmethod
-    def _get_valid_format(cls):
-        return list(map(lambda x: x.__name__, cls.__subclasses__()))
 
+class BaseDictionalizeFormat(BaseFormat):
+    """Base class for implementing format that can convert to/from dict"""
 
-class BaseFormat(AbstractFormat):
-    """Base class for implementing format"""
+    def __init__(self, load_data_key: str = "", dump_data_key: str = ""):
+        self.load_data_key = load_data_key
+        self.dump_data_key = dump_data_key
 
     def get_load_kwargs(self, src_ctx: str, opt: Dict[str, Any]) -> Dict[str, Any]:
         _opt = opt if opt else {}
         _opt[self.load_data_key] = src_ctx
         return _opt
 
-    def get_dump_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
+    def get_dump_kwargs(
+        self, internal: Dict[str, Any], opt: Dict[str, Any]
+    ) -> Dict[str, Any]:
         _opt = opt if opt else {}
         _opt[self.dump_data_key] = internal
         return _opt

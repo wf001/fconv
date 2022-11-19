@@ -1,13 +1,11 @@
 from typing import Any, Dict
 
-from .base import BaseFormat
-
-__format__ = "json"
+from .base import BaseDictionalizeFormat
 
 
-class Json(BaseFormat):
+class Json(BaseDictionalizeFormat):
     def __init__(self):
-        super().__init__(__format__)
+        super().__init__(load_data_key="s", dump_data_key="obj")
 
     @staticmethod
     def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:

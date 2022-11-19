@@ -1,7 +1,7 @@
 import typing as t
 from typing import Any, Dict
 
-from former.formats.base import AbstractFormat
+from former.formats.base import BaseFormat, _get_valid_format
 
 
 class Former:
@@ -14,14 +14,13 @@ class Former:
         in_opt: t.Optional[Dict[str, Any]] = None,
         out_opt: t.Optional[Dict[str, Any]] = None,
     ):
-        # TODO: self.src = src_Dict[str,Any][input_format]
+        # TODO: self._src_format = get_format(src_format)
         self._src_format = src_format
+        # TODO: self._target_format = get_format(target_format)
         self._target_format = target_format
 
         if not self.is_valid_format:
-            raise ValueError(
-                f"Invalid format. expect: {AbstractFormat._get_valid_format()}"
-            )
+            raise ValueError(f"Invalid format. expect: {_get_valid_format()}")
 
         self.src_path = src_path
         self.target_path = target_path
@@ -30,8 +29,8 @@ class Former:
 
     @property
     def is_valid_format(self) -> bool:
-        return issubclass(self._src_format, AbstractFormat) and issubclass(
-            self._target_format, AbstractFormat
+        return issubclass(self._src_format, BaseFormat) and issubclass(
+            self._target_format, BaseFormat
         )
 
     def form(self, src_ctx: str = "") -> str:

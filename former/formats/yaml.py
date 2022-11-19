@@ -1,13 +1,11 @@
 from typing import Any, Dict
 
-from .base import BaseFormat
-
-__format__ = "yaml"
+from .base import BaseDictionalizeFormat
 
 
-class Yaml(BaseFormat):
+class Yaml(BaseDictionalizeFormat):
     def __init__(self):
-        super().__init__(__format__)
+        super().__init__(load_data_key="stream", dump_data_key="data")
 
     @staticmethod
     def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from former.formats.base import BaseFormat
+from former.formats.base import BaseDictionalizeFormat
 from former.formats.json import Json
 
 
@@ -42,14 +42,14 @@ class TestFormatsUnit:
 
         def test_get_load_kwargs(self, mocker):
             m_super_gen_input = mocker.patch.object(
-                BaseFormat, "get_load_kwargs", MagicMock()
+                BaseDictionalizeFormat, "get_load_kwargs", MagicMock()
             )
             Json().get_load_kwargs("ctx", {})
             assert m_super_gen_input.call_count == 1
 
         def test_get_dump_kwargs(self, mocker):
             m_super_gen_input = mocker.patch.object(
-                BaseFormat, "get_dump_kwargs", MagicMock()
+                BaseDictionalizeFormat, "get_dump_kwargs", MagicMock()
             )
             Json().get_dump_kwargs({}, {})
             assert m_super_gen_input.call_count == 1
