@@ -96,7 +96,7 @@ def test_to_internal(mocker):
     opt = {"indent": 1, "parse_int": float}
     ctx2 = {"key1": "value1", "key2": "value2", "key3": "value3"}
     m_gen_in = mocker.patch.object(
-        FakeValidFormat, "gen_input_kwargs", MagicMock(return_value=ctx2)
+        FakeValidFormat, "get_load_kwargs", MagicMock(return_value=ctx2)
     )
     m_load = mocker.patch.object(FakeValidFormat, "load", MagicMock())
 
@@ -123,7 +123,7 @@ def test_from_internal(mocker):
     ctx2 = "{key1:value1,key2:value2}"
     opt = {"indent": 1, "parse_int": float}
     m_gen_out = mocker.patch.object(
-        FakeValidFormat, "gen_output_kwargs", MagicMock(return_value=ctx2)
+        FakeValidFormat, "get_dump_kwargs", MagicMock(return_value=ctx2)
     )
     m_dump = mocker.patch.object(FakeValidFormat, "dump", MagicMock())
 

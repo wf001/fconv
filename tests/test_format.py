@@ -39,16 +39,16 @@ class TestFormatUnit:
             with pytest.raises(Exception):
                 Json().dump(src_ctx)
 
-        def test_gen_input_kwargs(self, mocker):
+        def test_get_load_kwargs(self, mocker):
             m_super_gen_input = mocker.patch.object(
-                BaseFormat, "gen_input_kwargs", MagicMock()
+                BaseFormat, "get_load_kwargs", MagicMock()
             )
-            Json().gen_input_kwargs("ctx", {})
+            Json().get_load_kwargs("ctx", {})
             assert m_super_gen_input.call_count == 1
 
-        def test_gen_output_kwargs(self, mocker):
+        def test_get_dump_kwargs(self, mocker):
             m_super_gen_input = mocker.patch.object(
-                BaseFormat, "gen_output_kwargs", MagicMock()
+                BaseFormat, "get_dump_kwargs", MagicMock()
             )
-            Json().gen_output_kwargs("ctx", {})
+            Json().get_dump_kwargs("ctx", {})
             assert m_super_gen_input.call_count == 1

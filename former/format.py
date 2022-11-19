@@ -34,12 +34,12 @@ class AbstractFormat(ABC):
 
 
 class BaseFormat(AbstractFormat):
-    def gen_input_kwargs(self, src_ctx: str, opt: Dict[str, Any]):
+    def get_load_kwargs(self, src_ctx: str, opt: Dict[str, Any]):
         _opt = opt if opt else {}
         _opt[self.load_data_key] = src_ctx
         return _opt
 
-    def gen_output_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
+    def get_dump_kwargs(self, internal: Dict[str, Any], opt: Dict[str, Any]):
         _opt = opt if opt else {}
         _opt[self.dump_data_key] = internal
         return _opt

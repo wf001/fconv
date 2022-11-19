@@ -49,11 +49,11 @@ class Former:
 
     def _to_internal(self, ctx: str, opt: t.Optional[Dict[str, Any]]) -> Any:
         _s = self._src_format()
-        return _s.load(_s.gen_input_kwargs(ctx, opt))
+        return _s.load(_s.get_load_kwargs(ctx, opt))
 
     def _from_internal(self, internal: Any, opt: t.Optional[Dict[str, Any]]) -> str:
         _t = self._target_format()
-        return _t.dump(_t.gen_output_kwargs(internal, opt))
+        return _t.dump(_t.get_dump_kwargs(internal, opt))
 
     @staticmethod
     def _read_file(fname: str) -> str:
