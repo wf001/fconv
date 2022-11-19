@@ -1,7 +1,6 @@
 import typing as t
 
-from src.format import AbstractFormat
-
+from .format import AbstractFormat
 from .typing import InternalValue
 
 

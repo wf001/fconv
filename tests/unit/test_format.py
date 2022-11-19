@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.format import AbstractFormat, Format
+from former.format import AbstractFormat, Format
 
 
 class TestFormatUnit:

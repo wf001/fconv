@@ -1,4 +1,4 @@
-TARGET = ./src ./tests
+TARGET = ./former ./tests
 
 install:
 	pip install -r requirement.txt

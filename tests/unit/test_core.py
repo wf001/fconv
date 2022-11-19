@@ -2,9 +2,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from src.format import AbstractFormat
-from src.former import Former
-from src.typing import InternalValue
+from former.core import Former
+from former.format import AbstractFormat
+from former.typing import InternalValue
 
 
 class TestConcreteFormat(AbstractFormat):
@@ -69,10 +69,10 @@ class TestFormerUnit:
         Whether function calling inner Former().form() was current.
         """
 
-        m_get = mocker.patch("src.former.Former._read_file")
-        m_to = mocker.patch("src.former.Former._to_internal")
-        m_from = mocker.patch("src.former.Former._from_internal")
-        m_send = mocker.patch("src.former.Former._write_file")
+        m_get = mocker.patch("former.core.Former._read_file")
+        m_to = mocker.patch("former.core.Former._to_internal")
+        m_from = mocker.patch("former.core.Former._from_internal")
+        m_send = mocker.patch("former.core.Former._write_file")
         Former.form()
         assert m_get.called is get_called
         assert m_to.called is True
@@ -104,9 +104,9 @@ class TestFormerUnit:
 
     def test_to_internal(self, mocker):
 
-        mocker.patch("src.former.Former._read_file")
-        mocker.patch("src.former.Former._from_internal")
-        mocker.patch("src.former.Former._write_file")
+        mocker.patch("former.core.Former._read_file")
+        mocker.patch("former.core.Former._from_internal")
+        mocker.patch("former.core.Former._write_file")
         ctx1 = "{key1:value1,key2:value2}"
         opt = {"indent": 1, "parse_int": float}
         ctx2 = {"key1": "value1", "key2": "value2", "key3": "value3"}
@@ -130,9 +130,9 @@ class TestFormerUnit:
 
     def test_from_internal(self, mocker):
 
-        mocker.patch("src.former.Former._read_file")
-        mocker.patch("src.former.Former._to_internal")
-        mocker.patch("src.former.Former._write_file")
+        mocker.patch("former.core.Former._read_file")
+        mocker.patch("former.core.Former._to_internal")
+        mocker.patch("former.core.Former._write_file")
         ctx1 = {"key1": "value1", "key2": "value2", "key3": "value3"}
         ctx2 = "{key1:value1,key2:value2}"
         opt = {"indent": 1, "parse_int": float}

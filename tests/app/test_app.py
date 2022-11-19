@@ -4,8 +4,8 @@ import os
 
 import yaml
 
-from src.format import Format
-from src.former import Former
+from former.core import Former
+from former.format import Format
 
 
 class TestFormer:
@@ -13,9 +13,9 @@ class TestFormer:
         """
         json to yaml
         """
-        in_name = "assets/sample01.json"
+        in_name = "tests/assets/sample01.json"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"assets/{dt}.yaml"
+        out_name = f"tests/assets/{dt}.yaml"
 
         Former(
             src_format=Format.Json,
@@ -37,9 +37,9 @@ class TestFormer:
         """
         json to yaml
         """
-        in_name = "assets/sample01.json"
+        in_name = "tests/assets/sample01.json"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"assets/{dt}.yaml"
+        out_name = f"tests/assets/{dt}.yaml"
 
         Former(
             src_format=Format.Json,
@@ -63,9 +63,9 @@ class TestFormer:
         """
         yaml to json
         """
-        in_name = "assets/sample01.yaml"
+        in_name = "tests/assets/sample01.yaml"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"assets/{dt}.json"
+        out_name = f"tests/assets/{dt}.json"
 
         Former(Format.Yaml, Format.Json, src_path=in_name, target_path=out_name).form()
 
@@ -82,9 +82,9 @@ class TestFormer:
         """
         yaml to json
         """
-        in_name = "assets/sample01.yaml"
+        in_name = "tests/assets/sample01.yaml"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"assets/{dt}.json"
+        out_name = f"tests/assets/{dt}.json"
 
         Former(
             Format.Yaml,
