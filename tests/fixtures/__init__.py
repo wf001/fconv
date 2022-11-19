@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict
 
-from former.format import BaseFormat
+from former.formats.base import BaseFormat
 
 FIXTURES_ROOT = Path(__file__).parent
 JSON_FILE_PATH = FIXTURES_ROOT / "test.json"

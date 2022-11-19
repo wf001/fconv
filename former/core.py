@@ -1,7 +1,7 @@
 import typing as t
 from typing import Any, Dict
 
-from .format import AbstractFormat
+from former.formats.base import AbstractFormat
 
 
 class Former:

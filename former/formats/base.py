@@ -1,8 +1,5 @@
-import json
 from abc import ABC, abstractmethod
 from typing import Any, Dict
-
-import yaml
 
 
 class AbstractFormat(ABC):
@@ -43,48 +40,6 @@ class BaseFormat(AbstractFormat):
         _opt = opt if opt else {}
         _opt[self.dump_data_key] = internal
         return _opt
-
-
-class Json(BaseFormat):
-    def __init__(self):
-        super().__init__(self.load_data_key, self.dump_data_key)
-
-    @property
-    def load_data_key(self):
-        return "s"
-
-    @property
-    def dump_data_key(self):
-        return "obj"
-
-    @staticmethod
-    def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return json.loads(**src_ctx)
-
-    @staticmethod
-    def dump(internal: Dict[str, Any]) -> str:
-        return json.dumps(**internal)
-
-
-class Yaml(BaseFormat):
-    def __init__(self):
-        super().__init__(self.load_data_key, self.dump_data_key)
-
-    @property
-    def load_data_key(self):
-        return "stream"
-
-    @property
-    def dump_data_key(self):
-        return "data"
-
-    @staticmethod
-    def load(src_ctx: Dict[str, Any]) -> Dict[str, Any]:
-        return yaml.safe_load(**src_ctx)
-
-    @staticmethod
-    def dump(internal: Dict[str, Any]) -> str:
-        return yaml.dump(**internal)
 
 
 class XML:

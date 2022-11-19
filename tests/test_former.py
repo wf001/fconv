@@ -5,7 +5,8 @@ import os
 import yaml
 
 from former.core import Former
-from former.format import Json, Yaml
+from former.formats.json import Json
+from former.formats.yaml import Yaml
 
 from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
 

@@ -2,10 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from former.format import BaseFormat, Json
+from former.formats.base import BaseFormat
+from former.formats.json import Json
 
 
-class TestFormatUnit:
+class TestFormatsUnit:
     class TestJson:
         def test_load(self, mocker):
             m_loads = mocker.patch("json.loads")
