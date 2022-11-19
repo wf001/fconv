@@ -47,7 +47,11 @@ class Former:
 
         return target_ctx
 
-    def _to_internal(self, ctx: str, opt: t.Optional[dict]) -> InternalValue:
+    def _to_internal(
+            self,
+            ctx: str, 
+            opt: t.Optional[dict]
+            ) -> InternalValue:
         _s = self._src_format()
         ctx = _s._gen_input_kwargs(ctx, opt)
         return _s.load(ctx)

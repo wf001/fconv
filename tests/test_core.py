@@ -5,24 +5,7 @@ import pytest
 from former.core import Former
 from former.format import AbstractFormat
 from former.typing import InternalValue
-
-
-class TestConcreteFormat(AbstractFormat):
-    def load(self, str: dict) -> InternalValue:
-        return {}  # type: ignore
-
-    def dump(self, internal: InternalValue) -> str:
-        return ""
-
-    def _gen_input_kwargs(self, ctx, opt, k):
-        pass
-
-    def _gen_output_kwargs(self, ctx, opt):
-        pass
-
-
-class TestInvalidFormat:
-    pass
+from .fixtures import TestConcreteFormat, TestInvalidFormat
 
 
 class TestFormerUnit:
@@ -58,7 +41,8 @@ class TestFormerUnit:
                 False,
             ),
             (
-                Former(src_format=TestConcreteFormat, target_format=TestConcreteFormat),
+                Former(src_format=TestConcreteFormat,
+                       target_format=TestConcreteFormat),
                 False,
                 False,
             ),
@@ -111,7 +95,8 @@ class TestFormerUnit:
         opt = {"indent": 1, "parse_int": float}
         ctx2 = {"key1": "value1", "key2": "value2", "key3": "value3"}
         m_gen_in = mocker.patch.object(
-            TestConcreteFormat, "_gen_input_kwargs", MagicMock(return_value=ctx2)
+            TestConcreteFormat, "_gen_input_kwargs", MagicMock(
+                return_value=ctx2)
         )
         m_load = mocker.patch.object(TestConcreteFormat, "load", MagicMock())
 
@@ -137,7 +122,8 @@ class TestFormerUnit:
         ctx2 = "{key1:value1,key2:value2}"
         opt = {"indent": 1, "parse_int": float}
         m_gen_out = mocker.patch.object(
-            TestConcreteFormat, "_gen_output_kwargs", MagicMock(return_value=ctx2)
+            TestConcreteFormat, "_gen_output_kwargs", MagicMock(
+                return_value=ctx2)
         )
         m_dump = mocker.patch.object(TestConcreteFormat, "dump", MagicMock())
 

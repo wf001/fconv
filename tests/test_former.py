@@ -7,20 +7,24 @@ import yaml
 from former.core import Former
 from former.format import Format
 
+from .fixtures import (
+    JSON_FILE_PATH,
+    YAML_FILE_PATH
+)
+
 
 class TestFormer:
     def test_form_json_file_to_yaml_file(self):
         """
         json to yaml
         """
-        in_name = "tests/assets/sample01.json"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"tests/assets/{dt}.yaml"
+        out_name = f"{dt}.yaml"
 
         Former(
             src_format=Format.Json,
             target_format=Format.Yaml,
-            src_path=in_name,
+            src_path=JSON_FILE_PATH,
             target_path=out_name,
         ).form()
 
@@ -37,14 +41,13 @@ class TestFormer:
         """
         json to yaml
         """
-        in_name = "tests/assets/sample01.json"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"tests/assets/{dt}.yaml"
+        out_name = f"{dt}.yaml"
 
         Former(
             src_format=Format.Json,
             target_format=Format.Yaml,
-            src_path=in_name,
+            src_path=JSON_FILE_PATH,
             target_path=out_name,
             in_opt={"parse_int": float},
             out_opt={"indent": 2},
@@ -63,11 +66,16 @@ class TestFormer:
         """
         yaml to json
         """
-        in_name = "tests/assets/sample01.yaml"
+        in_name = YAML_FILE_PATH
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"tests/assets/{dt}.json"
+        out_name = f"{dt}.json"
 
-        Former(Format.Yaml, Format.Json, src_path=in_name, target_path=out_name).form()
+        Former(
+            Format.Yaml,
+            Format.Json,
+            src_path=YAML_FILE_PATH,
+            target_path=out_name
+        ).form()
 
         # testing
         with open(out_name) as f:
@@ -82,14 +90,13 @@ class TestFormer:
         """
         yaml to json
         """
-        in_name = "tests/assets/sample01.yaml"
         dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"tests/assets/{dt}.json"
+        out_name = f"{dt}.json"
 
         Former(
             Format.Yaml,
             Format.Json,
-            src_path=in_name,
+            src_path=YAML_FILE_PATH,
             target_path=out_name,
             out_opt={"indent": 3},
         ).form()
