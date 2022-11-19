@@ -8,8 +8,16 @@ from .typing import InternalValue
 
 class AbstractFormat(ABC):
     def __init__(self, input_data_key, output_data_key):
-        self.input_data_key = input_data_key
-        self.output_data_key = output_data_key
+        self.__input_data_key = input_data_key
+        self.__output_data_key = output_data_key
+
+    @property
+    def input_data_key(self):
+        return self.__input_data_key
+
+    @property
+    def output_data_key(self):
+        return self.__output_data_key
 
     @abstractmethod
     def load(self, src_ctx: dict) -> InternalValue:
