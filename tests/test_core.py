@@ -49,7 +49,7 @@ MODULE_PATH = ".".join(["former", "core", "Former"])
 )
 def test_form(mocker, Former, get_called, send_called):
     """
-    Whether function calling inner Former().form() was current.
+    Whether all of the functions inner Former().form() calling works currectly.
     """
 
     m_read = mocker.patch(f"{MODULE_PATH}._read_file")
@@ -73,7 +73,7 @@ def test_form(mocker, Former, get_called, send_called):
 )
 def test_init_handle_invalid_format(mocker, src_format, target_format):
     """
-    Raise exception when source format or target format isn't
+    Raise ValueError when source format or/and target format isn't
     concrete class of AbstractFormat
     """
 
@@ -87,55 +87,70 @@ def test_init_handle_invalid_format(mocker, src_format, target_format):
     assert str(e.value).startswith("Invalid format. expect")
 
 
-def test_to_internal(mocker):
+def test_parse_to_internal(mocker):
+    """Whether _parse_to_internal works currectly"""
 
     mocker.patch(f"{MODULE_PATH}._read_file")
     mocker.patch(f"{MODULE_PATH}._parse_from_internal")
     mocker.patch(f"{MODULE_PATH}._write_file")
-    ctx1 = "{key1:value1,key2:value2}"
-    opt = {"indent": 1, "parse_int": float}
-    ctx2 = {"key1": "value1", "key2": "value2", "key3": "value3"}
-    m_gen_in = mocker.patch.object(
-        FakeValidFormat, "get_load_kwargs", MagicMock(return_value=ctx2)
+
+    fake_src_ctx = "{key1:value1,key2:value2}"
+    src_opt = {"indent": 1, "parse_int": float}
+    fake_get_load_kwargs_ret = {"key1": "value1", "key2": "value2", "key3": "value3"}
+
+    m_get_laod = mocker.patch.object(
+        FakeValidFormat,
+        "get_load_kwargs",
+        MagicMock(return_value=fake_get_load_kwargs_ret),
     )
     m_load = mocker.patch.object(FakeValidFormat, "load", MagicMock())
 
     Former(
         src_format=FakeValidFormat,
         target_format=FakeValidFormat,
-    )._parse_to_internal(ctx=ctx1, opt=opt)
+    )._parse_to_internal(ctx=fake_src_ctx, opt=src_opt)
 
-    act_called_args1, _ = m_gen_in.call_args
-    act_called_args2, _ = m_load.call_args
-    assert m_gen_in.call_count == 1
-    assert act_called_args1[0] == ctx1
-    assert act_called_args1[1] == opt
+    act_get_load_args, _ = m_get_laod.call_args
+    act_load_args, _ = m_load.call_args
+
+    # get_load_kwargs must be called currect argument.
+    assert m_get_laod.call_count == 1
+    assert act_get_load_args[0] == fake_src_ctx
+    assert act_get_load_args[1] == src_opt
+    # load must be called currect argument.
     assert m_load.call_count == 1
-    assert act_called_args2[0] == ctx2
+    assert act_load_args[0] == fake_get_load_kwargs_ret
 
 
-def test_from_internal(mocker):
+def test_parse_from_internal(mocker):
 
     mocker.patch(f"{MODULE_PATH}._read_file")
     mocker.patch(f"{MODULE_PATH}._parse_to_internal")
     mocker.patch(f"{MODULE_PATH}._write_file")
-    ctx1 = {"key1": "value1", "key2": "value2", "key3": "value3"}
-    ctx2 = "{key1:value1,key2:value2}"
-    opt = {"indent": 1, "parse_int": float}
-    m_gen_out = mocker.patch.object(
-        FakeValidFormat, "get_dump_kwargs", MagicMock(return_value=ctx2)
+
+    fake_internal = {"key1": "value1", "key2": "value2", "key3": "value3"}
+    target_opt = {"indent": 1, "parse_int": float}
+    fake_get_dump_kwargs_ret = "{key1:value1,key2:value2}"
+
+    m_get_dump = mocker.patch.object(
+        FakeValidFormat,
+        "get_dump_kwargs",
+        MagicMock(return_value=fake_get_dump_kwargs_ret),
     )
     m_dump = mocker.patch.object(FakeValidFormat, "dump", MagicMock())
 
     Former(
         src_format=FakeValidFormat,
         target_format=FakeValidFormat,
-    )._parse_from_internal(internal=ctx1, opt=opt)
+    )._parse_from_internal(internal=fake_internal, opt=target_opt)
 
-    act_called_args1, _ = m_gen_out.call_args
-    act_called_args2, _ = m_dump.call_args
-    assert m_gen_out.call_count == 1
-    assert act_called_args1[0] == ctx1
-    assert act_called_args1[1] == opt
+    act_get_dump_args, _ = m_get_dump.call_args
+    act_dump_args, _ = m_dump.call_args
+
+    # get_dump_kwargs must be called currect argument.
+    assert m_get_dump.call_count == 1
+    assert act_get_dump_args[0] == fake_internal
+    assert act_get_dump_args[1] == target_opt
+    # load must be called currect argument.
     assert m_dump.call_count == 1
-    assert act_called_args2[0] == ctx2
+    assert act_dump_args[0] == fake_get_dump_kwargs_ret

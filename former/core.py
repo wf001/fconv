@@ -27,6 +27,7 @@ class Former:
         self.in_opt = in_opt
         self.out_opt = out_opt
 
+    # move to Abstract class or utility
     @property
     def is_valid_format(self) -> bool:
         return issubclass(self._src_format, BaseFormat) and issubclass(
@@ -47,12 +48,21 @@ class Former:
         return target_ctx
 
     def _parse_to_internal(self, ctx: str, opt: t.Optional[Dict[str, Any]]) -> Any:
+        """
+        1. Combine  ctx(raw input) and option passed by client.
+        2. Convert them into dictionary.
+        """
         _s = self._src_format()
         return _s.load(_s.get_load_kwargs(ctx, opt))
 
     def _parse_from_internal(
         self, internal: Any, opt: t.Optional[Dict[str, Any]]
     ) -> str:
+        """
+        1. Combine  intrernal(dictionary converted by load function) and
+        option passed by client.
+        2. Convert them into string.
+        """
         _t = self._target_format()
         return _t.dump(_t.get_dump_kwargs(internal, opt))
 
