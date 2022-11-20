@@ -1,7 +1,7 @@
 import typing as t
 from typing import Any, Dict
 
-from former.formats.base import BaseFormat, _get_valid_format
+from .formats.base import BaseFormat, _get_valid_format
 
 
 class Former:
