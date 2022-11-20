@@ -2,6 +2,8 @@ import argparse
 import datetime
 from pathlib import Path
 
+from former.formats import get_supported_formats
+
 JSON_FILE_PATH = Path(__file__).parent.parent / "tests/fixtures/test.json"
 
 HELP = {
@@ -16,11 +18,7 @@ HELP = {
 }
 
 
-def valid_format():
-    return ["json", "yaml"]
-
-
-__doc__ = "Convertion tool among many file formats"
+__doc__ = "Converter between multiple open-standard file formats."
 __version__ = "1.0"
 __prog__ = None
 
@@ -34,9 +32,9 @@ def parse_args():
     p.add_argument("-o", help=HELP["outfile"]),
     p.add_argument("--verbose", help=HELP["verbose"], action="store_true")
 
-    p.add_argument("source", help=HELP["source"], choices=valid_format())
+    p.add_argument("source", help=HELP["source"], choices=get_supported_formats())
     p.add_argument("-i", required=True, help=HELP["infile"])
-    p.add_argument("target", help=HELP["target"], choices=valid_format())
+    p.add_argument("target", help=HELP["target"], choices=get_supported_formats())
     args = p.parse_args()
 
     return args
@@ -45,7 +43,6 @@ def parse_args():
 def main():
     p = parse_args()
     print(p)
-    _main()
 
 
 def _main():

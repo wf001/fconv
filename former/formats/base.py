@@ -2,10 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
 
-def _get_valid_format():
-    return list(map(lambda x: x.__name__, BaseDictionalizeFormat.__subclasses__()))
-
-
 class BaseFormat(ABC):
     """Base class for implementing all the format"""
 

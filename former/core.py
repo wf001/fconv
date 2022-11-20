@@ -1,7 +1,8 @@
 import typing as t
 from typing import Any, Dict
 
-from former.formats.base import BaseFormat, _get_valid_format
+from former.formats import get_supported_formats
+from former.formats.base import BaseFormat
 
 
 class Former:
@@ -20,7 +21,7 @@ class Former:
         self._target_format = target_format
 
         if not self.is_valid_format:
-            raise ValueError(f"Invalid format. expect: {_get_valid_format()}")
+            raise ValueError(f"Invalid format. expect: {get_supported_formats()}")
 
         self.src_path = src_path
         self.target_path = target_path
