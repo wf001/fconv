@@ -52,8 +52,8 @@ class Former:
         1. Combine  ctx(raw input) and option passed by client.
         2. Convert them into dictionary.
         """
-        _s = self._src_format()
-        return _s.load(_s.get_load_kwargs(ctx, opt))
+        src_format = self._src_format()
+        return src_format.load(src_format.get_load_kwargs(ctx, opt))
 
     def _parse_from_internal(
         self, internal: Any, opt: t.Optional[Dict[str, Any]]
@@ -63,8 +63,8 @@ class Former:
         option passed by client.
         2. Convert them into string.
         """
-        _t = self._target_format()
-        return _t.dump(_t.get_dump_kwargs(internal, opt))
+        target_format = self._target_format()
+        return target_format.dump(target_format.get_dump_kwargs(internal, opt))
 
     @staticmethod
     def _read_file(fname: str) -> str:
