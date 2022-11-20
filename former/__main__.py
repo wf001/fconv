@@ -2,13 +2,14 @@ import argparse
 import datetime
 from pathlib import Path
 
+from former import __doc__, __prog__, __version__
 from former.formats import get_supported_formats
 
 JSON_FILE_PATH = Path(__file__).parent.parent / "tests/fixtures/test.json"
 
 HELP = {
     "source": "data format converting from",
-    "infile": "a file converting from",
+    "infile": "(Required) a file converting from",
     "target": "data format converting to",
     "outfile": "a file converting to",
     "in_opt": "option sets of a file converting from",
@@ -16,11 +17,6 @@ HELP = {
     "version": "print version number and exit",
     "verbose": "print more information",
 }
-
-
-__doc__ = "Converter between multiple open-standard file formats."
-__version__ = "1.0"
-__prog__ = None
 
 
 def parse_args():

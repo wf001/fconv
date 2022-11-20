@@ -10,7 +10,7 @@ MODULE_PATH = ".".join(["former", "core", "Former"])
 
 
 @pytest.mark.parametrize(
-    "Former, get_called, send_called",
+    "Former, is_read_called, is_write_called",
     [
         (
             Former(
@@ -47,7 +47,7 @@ MODULE_PATH = ".".join(["former", "core", "Former"])
         ),
     ],
 )
-def test_form(mocker, Former, get_called, send_called):
+def test_form(mocker, Former, is_read_called, is_write_called):
     """
     Whether all of the functions inner Former().form() calling works currectly.
     """
@@ -57,10 +57,10 @@ def test_form(mocker, Former, get_called, send_called):
     m_from = mocker.patch(f"{MODULE_PATH}._parse_from_internal")
     m_write = mocker.patch(f"{MODULE_PATH}._write_file")
     Former.form()
-    assert m_read.called is get_called
+    assert m_read.called is is_read_called
     assert m_to.called is True
     assert m_from.called is True
-    assert m_write.called is send_called
+    assert m_write.called is is_write_called
 
 
 @pytest.mark.parametrize(
@@ -74,7 +74,7 @@ def test_form(mocker, Former, get_called, send_called):
 def test_init_handle_invalid_format(mocker, src_format, target_format):
     """
     Raise ValueError when source format or/and target format isn't
-    concrete class of AbstractFormat
+    supported format.
     """
 
     with pytest.raises(ValueError) as e:
