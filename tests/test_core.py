@@ -53,8 +53,8 @@ def test_form(mocker, Former, get_called, send_called):
     """
 
     m_read = mocker.patch(f"{MODULE_PATH}._read_file")
-    m_to = mocker.patch(f"{MODULE_PATH}._to_internal")
-    m_from = mocker.patch(f"{MODULE_PATH}._from_internal")
+    m_to = mocker.patch(f"{MODULE_PATH}._parse_to_internal")
+    m_from = mocker.patch(f"{MODULE_PATH}._parse_from_internal")
     m_write = mocker.patch(f"{MODULE_PATH}._write_file")
     Former.form()
     assert m_read.called is get_called
@@ -90,7 +90,7 @@ def test_init_handle_invalid_format(mocker, src_format, target_format):
 def test_to_internal(mocker):
 
     mocker.patch(f"{MODULE_PATH}._read_file")
-    mocker.patch(f"{MODULE_PATH}._from_internal")
+    mocker.patch(f"{MODULE_PATH}._parse_from_internal")
     mocker.patch(f"{MODULE_PATH}._write_file")
     ctx1 = "{key1:value1,key2:value2}"
     opt = {"indent": 1, "parse_int": float}
@@ -103,7 +103,7 @@ def test_to_internal(mocker):
     Former(
         src_format=FakeValidFormat,
         target_format=FakeValidFormat,
-    )._to_internal(ctx=ctx1, opt=opt)
+    )._parse_to_internal(ctx=ctx1, opt=opt)
 
     act_called_args1, _ = m_gen_in.call_args
     act_called_args2, _ = m_load.call_args
@@ -117,7 +117,7 @@ def test_to_internal(mocker):
 def test_from_internal(mocker):
 
     mocker.patch(f"{MODULE_PATH}._read_file")
-    mocker.patch(f"{MODULE_PATH}._to_internal")
+    mocker.patch(f"{MODULE_PATH}._parse_to_internal")
     mocker.patch(f"{MODULE_PATH}._write_file")
     ctx1 = {"key1": "value1", "key2": "value2", "key3": "value3"}
     ctx2 = "{key1:value1,key2:value2}"
@@ -130,7 +130,7 @@ def test_from_internal(mocker):
     Former(
         src_format=FakeValidFormat,
         target_format=FakeValidFormat,
-    )._from_internal(internal=ctx1, opt=opt)
+    )._parse_from_internal(internal=ctx1, opt=opt)
 
     act_called_args1, _ = m_gen_out.call_args
     act_called_args2, _ = m_dump.call_args

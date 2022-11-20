@@ -37,8 +37,8 @@ class Former:
         if self.src_path and not src_ctx:
             src_ctx = self._read_file(self.src_path)
 
-        target_ctx = self._from_internal(
-            self._to_internal(src_ctx, self.in_opt), self.out_opt
+        target_ctx = self._parse_from_internal(
+            self._parse_to_internal(src_ctx, self.in_opt), self.out_opt
         )
 
         if self.target_path:
@@ -46,11 +46,13 @@ class Former:
 
         return target_ctx
 
-    def _to_internal(self, ctx: str, opt: t.Optional[Dict[str, Any]]) -> Any:
+    def _parse_to_internal(self, ctx: str, opt: t.Optional[Dict[str, Any]]) -> Any:
         _s = self._src_format()
         return _s.load(_s.get_load_kwargs(ctx, opt))
 
-    def _from_internal(self, internal: Any, opt: t.Optional[Dict[str, Any]]) -> str:
+    def _parse_from_internal(
+        self, internal: Any, opt: t.Optional[Dict[str, Any]]
+    ) -> str:
         _t = self._target_format()
         return _t.dump(_t.get_dump_kwargs(internal, opt))
 
