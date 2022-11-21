@@ -7,6 +7,21 @@ from former.util import Logger, logg
 
 
 class Former:
+    """Object for converting input file or string into other formatted file or string.
+    Keyword Arguments:
+        - src_format (Required) -- The format name of the file converting from.
+        - target_format (Required) -- The format name of the file converting to.
+        - src_path -- The name of the file converting from.
+        - target_path -- The name of the file converting to.
+        - in_opt -- The option sets of file format converting from.
+        - out_opt -- The option sets of file format converting to.
+
+        To know which option is available
+        See the reference:
+            - json -- https://docs.python.org/3/library/json.html
+            - yaml -- https://pyyaml.org/wiki/PyYAMLDocumentation
+    """
+
     @logg
     def __init__(
         self,
@@ -32,7 +47,6 @@ class Former:
     def __repr__(self):
         return f"{self.__class__.__module__}, {self.__dict__}"
 
-    # move to Abstract class or utility
     @property
     def is_valid_format(self) -> bool:
         return issubclass(self._src_format, BaseFormat) and issubclass(

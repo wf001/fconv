@@ -4,15 +4,18 @@ install:
 	pip install -r requirement.txt
 
 check:
-	make test &&\
+	make test && \
 		make lint
 
 test:
 	pytest --capture=no -vv
 
 lint:
-	mypy ${TARGET}
+	make mypy-only && \
 		black ${TARGET} && \
-		isort ${TARGET} &&\
+		isort ${TARGET} && \
 		flake8 ${TARGET} --doctest
+
+mypy-only:
+	mypy ${TARGET}
 

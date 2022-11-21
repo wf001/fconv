@@ -1,4 +1,5 @@
 import argparse
+from argparse import Namespace
 from logging import DEBUG, ERROR
 
 from former import HELP, __doc__, __prog__, __version__
@@ -7,7 +8,7 @@ from former.formats import SUPPORTED_FORMATS, get_supported_formats
 from former.util import Logger
 
 
-def parse_args():
+def parse_args() -> Namespace:
     p = argparse.ArgumentParser(prog=__prog__, description=__doc__)
 
     p.add_argument(
@@ -24,7 +25,10 @@ def parse_args():
     return args
 
 
-def main():
+def main() -> None:
+    """
+    Enterypoint for CLI command 'former'
+    """
     p = parse_args()
     llevel = DEBUG if p.debug else ERROR
     Logger(llevel)
