@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 from former.formats import get_supported_formats
 from former.formats.base import BaseFormat
+from former.util import MyLogger
 
 
 class Former:
@@ -15,9 +16,16 @@ class Former:
         in_opt: t.Optional[Dict[str, Any]] = None,
         out_opt: t.Optional[Dict[str, Any]] = None,
     ):
-        # TODO: self._src_format = get_format(src_format)
+        # Logging
+        log = MyLogger().logger
+        log.debug(f"{src_format=}")
+        log.debug(f"{target_format=}")
+        log.debug(f"{src_path=}")
+        log.debug(f"{target_path=}")
+        log.debug(f"{in_opt=}")
+        log.debug(f"{out_opt=}")
+
         self._src_format = src_format
-        # TODO: self._target_format = get_format(target_format)
         self._target_format = target_format
 
         if not self.is_valid_format:
