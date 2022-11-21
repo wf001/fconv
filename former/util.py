@@ -25,7 +25,6 @@ class Logger(object, metaclass=SingletonType):
         streamHandler = StreamHandler(stdout)
         streamHandler.setFormatter(formatter)
         self._logger.addHandler(streamHandler)
-        print("Generate new instance")
 
     @property
     def logger(self):

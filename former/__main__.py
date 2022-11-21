@@ -34,13 +34,15 @@ def main():
     src_path = p.i
     target_path = p.o
 
-    Former(
+    r = Former(
         src_format=SUPPORTED_FORMATS.get(src_fmt),
         target_format=SUPPORTED_FORMATS.get(target_fmt),
         src_path=src_path,
         target_path=target_path,
     ).form()
-    return 0
+
+    if not target_path:
+        print(r)
 
 
 if __name__ == "__main__":
