@@ -17,13 +17,6 @@ class Former:
         in_opt: t.Optional[Dict[str, Any]] = None,
         out_opt: t.Optional[Dict[str, Any]] = None,
     ):
-        log = Logger().logger
-        log.debug(f"{src_format=}")
-        log.debug(f"{target_format=}")
-        log.debug(f"{src_path=}")
-        log.debug(f"{target_path=}")
-        log.debug(f"{in_opt=}")
-        log.debug(f"{out_opt=}")
 
         self._src_format = src_format
         self._target_format = target_format
@@ -36,6 +29,9 @@ class Former:
         self.in_opt = in_opt
         self.out_opt = out_opt
 
+    def __repr__(self):
+        return f"{self.__class__.__module__}, {self.__dict__}"
+
     # move to Abstract class or utility
     @property
     def is_valid_format(self) -> bool:
@@ -45,6 +41,8 @@ class Former:
 
     @logg
     def form(self, src_ctx: str = "") -> str:
+        log = Logger().logger
+        log.debug(f"{self=}")
         if self.src_path and not src_ctx:
             src_ctx = self._read_file(self.src_path)
 

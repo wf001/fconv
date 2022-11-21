@@ -1,4 +1,5 @@
 from logging import ERROR, Formatter, StreamHandler, getLogger
+from sys import stdout
 from typing import Any, Dict
 
 
@@ -21,7 +22,7 @@ class Logger(object, metaclass=SingletonType):
             "\033[32m %(module)s.py\033[0m %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s"
         )
 
-        streamHandler = StreamHandler()
+        streamHandler = StreamHandler(stdout)
         streamHandler.setFormatter(formatter)
         self._logger.addHandler(streamHandler)
         print("Generate new instance")
@@ -34,12 +35,14 @@ class Logger(object, metaclass=SingletonType):
 def logg(f):
     def wrapped(*arg, **kwargs):
         log = Logger().logger
-        log.debug(f"\033[34m[ENTER]:\033[0m {f.__name__ = }")
-        log.debug(f"\033[34m[ENTER]:\033[0m {arg = }")
-        log.debug(f"\033[34m[ENTER]:\033[0m {kwargs = }")
-        r = f(*arg, **kwargs)
-        log.debug(f"\033[33m[EXIT]:\033[0m {r=}")
+        log.debug(f"\033[34m[ENTER]:\033[36m {arg = }")
+        log.debug(f"\033[34m[ENTER]:\033[36m {f.__name__ = }")
+        log.debug(f"\033[34m[ENTER]:\033[36m {kwargs = }")
+
+        return_value = f(*arg, **kwargs)
+
+        log.debug(f"\033[33m[EXIT]:\033[35m {return_value=}")
         log.debug("========================================")
-        return r
+        return return_value
 
     return wrapped
