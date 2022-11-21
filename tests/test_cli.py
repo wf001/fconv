@@ -6,20 +6,22 @@ import pytest
 from former import __prog__
 from former.__main__ import main
 
+from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
+
 
 @pytest.mark.parametrize(
     "argv",
     [
-        [__prog__, "json", "yaml", "-i", "hoge"],
-        [__prog__, "yaml", "json", "-i", "hoge"],
-        [__prog__, "json", "yaml", "-i", "hoge", "-o", "fuga"],
+        [__prog__, "json", "yaml", "-i", JSON_FILE_PATH],
+        [__prog__, "yaml", "json", "-i", YAML_FILE_PATH],
+        [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "-o", YAML_FILE_PATH],
     ],
 )
-def test_cli_valid_args(capfd, argv):
+def test_cli_valid_args(mocker, capfd, argv):
     with mock.patch.object(sys, "argv", argv):
-        main()
-        out, err = capfd.readouterr()
-        assert "Namespace" in out
+        mocker.patch("former.core.Former._write_file")
+        r = main()
+        assert r == 0
 
 
 @pytest.mark.parametrize(
@@ -27,7 +29,7 @@ def test_cli_valid_args(capfd, argv):
     [
         [__prog__, "json"],
         [__prog__, "json", "yaml"],
-        [__prog__, "json", "-i", "hoge"],
+        [__prog__, "json", "-i", "test.json"],
     ],
 )
 def test_cli_invalid_args1(capfd, args):

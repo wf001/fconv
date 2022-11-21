@@ -1,1 +1,1 @@
-pytest --capture=no -vv
+make test

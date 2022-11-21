@@ -1,22 +1,8 @@
 import argparse
-import datetime
-from pathlib import Path
 
-from former import __doc__, __prog__, __version__
-from former.formats import get_supported_formats
-
-JSON_FILE_PATH = Path(__file__).parent.parent / "tests/fixtures/test.json"
-
-HELP = {
-    "source": "data format converting from",
-    "infile": "(Required) a file converting from",
-    "target": "data format converting to",
-    "outfile": "a file converting to",
-    "in_opt": "option sets of a file converting from",
-    "out_opt": "option sets of a file converting to",
-    "version": "print version number and exit",
-    "verbose": "print more information",
-}
+from former import HELP, __doc__, __prog__, __version__
+from former.core import Former
+from former.formats import SUPPORTED_FORMATS, get_supported_formats
 
 
 def parse_args():
@@ -38,26 +24,19 @@ def parse_args():
 
 def main():
     p = parse_args()
-    print(p)
+    # inlclude_verbose = p.verbose
+    src_fmt = p.source
+    target_fmt = p.target
+    src_path = p.i
+    target_path = p.o
 
-
-def _main():
-    # from former.core import Former
-
-    dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-    print(dt)
-
-
-#    out_name = f"{dt}.yaml"
-#
-#    r = Former(
-#        src_format="json",
-#        target_format="yaml",
-#        src_path=JSON_FILE_PATH,
-#        target_path=out_name,
-#    ).form()
-#    print(r)
-#    os.remove(out_name)
+    Former(
+        src_format=SUPPORTED_FORMATS.get(src_fmt),
+        target_format=SUPPORTED_FORMATS.get(target_fmt),
+        src_path=src_path,
+        target_path=target_path,
+    ).form()
+    return 0
 
 
 if __name__ == "__main__":
