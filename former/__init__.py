@@ -10,5 +10,5 @@ HELP = {
     "in_opt": "option sets of a file converting from",
     "out_opt": "option sets of a file converting to",
     "version": "print version number and exit",
-    "verbose": "print more information",
+    "debug": "print more information",
 }

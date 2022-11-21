@@ -11,14 +11,14 @@ class SingletonType(type):
         return cls._instances[cls]
 
 
-class MyLogger(object, metaclass=SingletonType):
+class Logger(object, metaclass=SingletonType):
     _logger = None
 
     def __init__(self, level=ERROR):
         self._logger = getLogger()
         self._logger.setLevel(level)
         formatter = Formatter(
-            "%(module)s.py %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s"
+            "\033[32m %(module)s.py\033[0m %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s"
         )
 
         streamHandler = StreamHandler()
@@ -29,3 +29,17 @@ class MyLogger(object, metaclass=SingletonType):
     @property
     def logger(self):
         return self._logger
+
+
+def logg(f):
+    def wrapped(*arg, **kwargs):
+        log = Logger().logger
+        log.debug(f"\033[34m[ENTER]:\033[0m {f.__name__ = }")
+        log.debug(f"\033[34m[ENTER]:\033[0m {arg = }")
+        log.debug(f"\033[34m[ENTER]:\033[0m {kwargs = }")
+        r = f(*arg, **kwargs)
+        log.debug(f"\033[33m[EXIT]:\033[0m {r=}")
+        log.debug("========================================")
+        return r
+
+    return wrapped

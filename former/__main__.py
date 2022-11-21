@@ -4,7 +4,7 @@ from logging import DEBUG, ERROR
 from former import HELP, __doc__, __prog__, __version__
 from former.core import Former
 from former.formats import SUPPORTED_FORMATS, get_supported_formats
-from former.util import MyLogger
+from former.util import Logger
 
 
 def parse_args():
@@ -14,7 +14,7 @@ def parse_args():
         "--v", help=HELP["version"], action="version", version=f"version: {__version__}"
     ),
     p.add_argument("-o", help=HELP["outfile"]),
-    p.add_argument("--verbose", help=HELP["verbose"], action="store_true")
+    p.add_argument("--debug", help=HELP["debug"], action="store_true")
 
     p.add_argument("source", help=HELP["source"], choices=get_supported_formats())
     p.add_argument("-i", required=True, help=HELP["infile"])
@@ -26,9 +26,9 @@ def parse_args():
 
 def main():
     p = parse_args()
-    llevel = DEBUG if p.verbose else ERROR
-    MyLogger(llevel)
-    # inlclude_verbose = p.verbose
+    llevel = DEBUG if p.debug else ERROR
+    Logger(llevel)
+
     src_fmt = p.source
     target_fmt = p.target
     src_path = p.i

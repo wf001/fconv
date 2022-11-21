@@ -3,10 +3,11 @@ from typing import Any, Dict
 
 from former.formats import get_supported_formats
 from former.formats.base import BaseFormat
-from former.util import MyLogger
+from former.util import Logger, logg
 
 
 class Former:
+    @logg
     def __init__(
         self,
         src_format,
@@ -16,8 +17,7 @@ class Former:
         in_opt: t.Optional[Dict[str, Any]] = None,
         out_opt: t.Optional[Dict[str, Any]] = None,
     ):
-        # Logging
-        log = MyLogger().logger
+        log = Logger().logger
         log.debug(f"{src_format=}")
         log.debug(f"{target_format=}")
         log.debug(f"{src_path=}")
@@ -43,6 +43,7 @@ class Former:
             self._target_format, BaseFormat
         )
 
+    @logg
     def form(self, src_ctx: str = "") -> str:
         if self.src_path and not src_ctx:
             src_ctx = self._read_file(self.src_path)
