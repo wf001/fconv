@@ -1,6 +1,8 @@
 __doc__ = "Converter between multiple open-standard file formats."
-__version__ = "1.0"
+__version__ = "1.0.0"
 __prog__ = "former"
+__author__ = "wf001"
+__license__ = "MIT"
 
 HELP = {
     "source": "data format converting from",
