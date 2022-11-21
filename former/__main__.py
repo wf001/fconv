@@ -4,24 +4,7 @@ from former import HELP, __doc__, __prog__, __version__
 from former.core import Former
 from former.formats import SUPPORTED_FORMATS, get_supported_formats
 from inspect import stack, currentframe
-from logging import getLogger, StreamHandler, Formatter, DEBUG, INFO, ERROR
-
-llevel = ERROR
-
-logger = getLogger(__name__)
-logger.setLevel(llevel)
-
-formatter = Formatter(
-    f'%(module)s.py %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s')
-
-sh = StreamHandler()
-sh.setLevel(llevel)
-sh.setFormatter(formatter)
-logger.addHandler(sh)
-
-def main():
-    logger.debug("hoge")
-    logger.error("hoge")
+from logging import getLogger, StreamHandler, Formatter, DEBUG, ERROR
 
 
 def parse_args():
@@ -43,8 +26,40 @@ def parse_args():
     return args
 
 
-def _main():
+class SingletonType(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(
+                SingletonType, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class MyLogger(object, metaclass=SingletonType):
+    _logger = None
+
+    def __init__(self, level):
+        self._logger = getLogger()
+        self._logger.setLevel(level)
+        formatter = Formatter(
+            f'%(module)s.py %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s')
+
+        streamHandler = StreamHandler()
+        streamHandler.setFormatter(formatter)
+        self._logger.addHandler(streamHandler)
+        print("Generate new instance")
+
+    @property
+    def logger(self):
+        return self._logger
+
+
+def main():
     p = parse_args()
+    l = MyLogger(DEBUG).logger
+    l.debug(p)
+
     # inlclude_verbose = p.verbose
     src_fmt = p.source
     target_fmt = p.target
