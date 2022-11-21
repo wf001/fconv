@@ -3,6 +3,25 @@ import argparse
 from former import HELP, __doc__, __prog__, __version__
 from former.core import Former
 from former.formats import SUPPORTED_FORMATS, get_supported_formats
+from inspect import stack, currentframe
+from logging import getLogger, StreamHandler, Formatter, DEBUG, INFO, ERROR
+
+llevel = ERROR
+
+logger = getLogger(__name__)
+logger.setLevel(llevel)
+
+formatter = Formatter(
+    f'%(module)s.py %(funcName)s() ln.%(lineno)s | [%(levelname)s] %(message)s')
+
+sh = StreamHandler()
+sh.setLevel(llevel)
+sh.setFormatter(formatter)
+logger.addHandler(sh)
+
+def main():
+    logger.debug("hoge")
+    logger.error("hoge")
 
 
 def parse_args():
@@ -14,15 +33,17 @@ def parse_args():
     p.add_argument("-o", help=HELP["outfile"]),
     p.add_argument("--verbose", help=HELP["verbose"], action="store_true")
 
-    p.add_argument("source", help=HELP["source"], choices=get_supported_formats())
+    p.add_argument("source", help=HELP["source"],
+                   choices=get_supported_formats())
     p.add_argument("-i", required=True, help=HELP["infile"])
-    p.add_argument("target", help=HELP["target"], choices=get_supported_formats())
+    p.add_argument("target", help=HELP["target"],
+                   choices=get_supported_formats())
     args = p.parse_args()
 
     return args
 
 
-def main():
+def _main():
     p = parse_args()
     # inlclude_verbose = p.verbose
     src_fmt = p.source
@@ -40,4 +61,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    _main()
