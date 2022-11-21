@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
-from former.util import logg
-
 
 class BaseFormat(ABC):
     """Base class for implementing all the format"""
 
-    @logg
     @abstractmethod
     def load(self, src_ctx: Any) -> Any:
         raise NotImplementedError()
@@ -35,7 +32,3 @@ class BaseDictionalizeFormat(BaseFormat):
         _opt = opt if opt else {}
         _opt[self.dump_data_key] = internal
         return _opt
-
-
-class XML:
-    pass

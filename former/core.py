@@ -36,6 +36,15 @@ class Former:
 
     """
 
+    __slots__ = [
+        "_src_format",
+        "_target_format",
+        "src_path",
+        "target_path",
+        "in_opt",
+        "out_opt",
+    ]
+
     @logg
     def __init__(
         self,
@@ -59,7 +68,7 @@ class Former:
         self.out_opt = out_opt
 
     def __repr__(self):
-        return f"{self.__class__.__module__}, {self.__dict__}"
+        return f"{self.__class__.__module__}"
 
     @property
     def is_valid_format(self) -> bool:
