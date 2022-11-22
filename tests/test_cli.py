@@ -3,8 +3,8 @@ from unittest import mock
 
 import pytest
 
-from former import __prog__
-from former.__main__ import main
+from fconv import __prog__
+from fconv.__main__ import main
 
 from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
 
@@ -18,9 +18,9 @@ from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
     ],
 )
 def test_cli_valid_args(mocker, capfd, argv):
-    m_form = mocker.patch("former.core.Former.form")
+    m_form = mocker.patch("fconv.core.Former.form")
     with mock.patch.object(sys, "argv", argv):
-        mocker.patch("former.core.Former._write_file")
+        mocker.patch("fconv.core.Former._write_file")
         main()
     assert m_form.call_count == 1
 
@@ -33,11 +33,11 @@ def test_cli_valid_args(mocker, capfd, argv):
     ],
 )
 def test_cli_print_out(mocker, capfd, argv):
-    m_form = mocker.patch("former.core.Former.form")
+    m_form = mocker.patch("fconv.core.Former.form")
     m_form.return_value = "result printed out"
     out = None
     with mock.patch.object(sys, "argv", argv):
-        mocker.patch("former.core.Former._write_file")
+        mocker.patch("fconv.core.Former._write_file")
         main()
     out, _ = capfd.readouterr()
     assert "result printed out" in out
@@ -51,11 +51,11 @@ def test_cli_print_out(mocker, capfd, argv):
     ],
 )
 def test_cli_not_print_out(mocker, capfd, argv):
-    m_form = mocker.patch("former.core.Former.form")
+    m_form = mocker.patch("fconv.core.Former.form")
     m_form.return_value = "result printed out"
     out = None
     with mock.patch.object(sys, "argv", argv):
-        mocker.patch("former.core.Former._write_file")
+        mocker.patch("fconv.core.Former._write_file")
         main()
     out, _ = capfd.readouterr()
     assert len(out) == 0

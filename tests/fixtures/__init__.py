@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict
 
-from former.formats.base import BaseDictionalizeFormat
+from fconv.formats.base import BaseDictionalizeFormat
 
 FIXTURES_ROOT = Path(__file__).parent
 JSON_FILE_PATH = str(FIXTURES_ROOT / "test.json")

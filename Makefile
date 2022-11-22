@@ -1,4 +1,4 @@
-TARGET = ./former ./tests
+TARGET = ./fconv ./tests
 
 install:
 	pip install -r requirement.txt

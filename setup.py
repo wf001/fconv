@@ -1,7 +1,7 @@
 
 
 from setuptools import setup, find_packages
-import former
+import fconv
 
 
 def _requires_from_file(filename):
@@ -9,18 +9,18 @@ def _requires_from_file(filename):
 
 
 setup(
-    name='former',
-    version=former.__version__,
-    description=former.__doc__,
-    author=former.__author__,
-    url=former.__url__,
+    name='fconv',
+    version=fconv.__version__,
+    description=fconv.__doc__,
+    author=fconv.__author__,
+    url=fconv.__url__,
     author_email="wf001@diax.xyz",
-    license=former.__license__,
+    license=fconv.__license__,
     entry_points={
         'console_scripts': [
-            'former = former.__main__:main',
+            'fconv = fconv.__main__:main',
         ],
     },
-    packages=find_packages(include=['former', 'former.*']),
+    packages=find_packages(include=['fconv', 'fconv.*']),
     install_requires=_requires_from_file('requirement.txt')
 )

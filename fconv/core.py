@@ -1,9 +1,9 @@
 import typing as t
 from typing import Any, Dict
 
-from former.formats import get_supported_formats
-from former.formats.base import BaseFormat
-from former.util import Logger, logg
+from fconv.formats import get_supported_formats
+from fconv.formats.base import BaseFormat
+from fconv.util import Logger, logg
 
 
 class Former:
@@ -22,9 +22,9 @@ class Former:
             - yaml -- https://pyyaml.org/wiki/PyYAMLDocumentation
 
         Example:
-            >>> from former.core import Former
-            >>> from former.formats.json import Json
-            >>> from former.formats.yaml import Yaml
+            >>> from fconv.core import Former
+            >>> from fconv.formats.json import Json
+            >>> from fconv.formats.yaml import Yaml
             >>> f = Former(src_format=Json, target_format=Yaml)
 
             >>> f.form('{"key1":"value1"}')

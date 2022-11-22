@@ -2,10 +2,10 @@ import argparse
 from argparse import Namespace
 from logging import DEBUG, ERROR
 
-from former import HELP, __doc__, __prog__, __version__
-from former.core import Former
-from former.formats import SUPPORTED_FORMATS, get_supported_formats
-from former.util import Logger
+from fconv import HELP, __doc__, __prog__, __version__
+from fconv.core import Former
+from fconv.formats import SUPPORTED_FORMATS, get_supported_formats
+from fconv.util import Logger
 
 
 def parse_args() -> Namespace:
@@ -27,7 +27,7 @@ def parse_args() -> Namespace:
 
 def main() -> None:
     """
-    Enterypoint for CLI command 'former'
+    Enterypoint for CLI command 'fconv'
     """
     p = parse_args()
     llevel = DEBUG if p.debug else ERROR

@@ -1,13 +1,13 @@
-# former
-Python library/CLI command that convert between multiple file formats
+# fconv
+Python lib and CLI command that convert between multiple file formats
 
 ## Getting started
 ```
-pip install --upgrade git+https://github.com/wf001/former
+pip install fconv
 ```
 
 ```
-$ former --v
+$ fconv --v
 version: 1.0.0
 ```
 
@@ -17,14 +17,13 @@ version: 1.0.0
 - Supportting format 
 	- json
 	- yaml
+	- on going
+		- xml
+		- toml
+		- ini
 
-- Plan to support
-	- xml
-	- toml
-	- ini
 
-
-- In condition of using as a module, former supports optional arguments.
+- In condition of using as a module, fconv supports optional arguments.
 
 To know which options are available,
 
@@ -36,9 +35,9 @@ See the reference:
 ## Example
 ### Use as a module
 ```
->>> from former.core import Former
->>> from former.formats.json import Json
->>> from former.formats.yaml import Yaml
+>>> from fconv.core import Former
+>>> from fconv.formats.json import Json
+>>> from fconv.formats.yaml import Yaml
 >>> f = Former(src_format=Json, target_format=Yaml)
 
 >>> f.form('{"key1":"value1"}')
@@ -52,17 +51,17 @@ See the reference:
 ### Use as a CLI command
 Basic usage
 ```
-former <source format> <target format> -i <source file name>
+fconv <source format> <target format> -i <source file name>
 ```
 
 Convert json file into yaml and print out
 ```
-former json yaml -i sample.json
+fconv json yaml -i sample.json
 ```
 
 Convert yaml file into json formated file
 ```
-former yaml json -i sample.yaml -o result.json
+fconv yaml json -i sample.yaml -o result.json
 ```
 
 ### License

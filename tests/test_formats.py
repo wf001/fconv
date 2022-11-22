@@ -2,9 +2,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from former.formats.base import BaseDictionalizeFormat
-from former.formats.json import Json
-from former.formats.yaml import Yaml
+from fconv.formats.base import BaseDictionalizeFormat
+from fconv.formats.json import Json
+from fconv.formats.yaml import Yaml
 
 
 class TestFormatsUnit:

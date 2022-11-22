@@ -2,11 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from former.core import Former
+from fconv.core import Former
 
 from .fixtures import FakeInvalidFormat, FakeValidFormat
 
-MODULE_PATH = ".".join(["former", "core", "Former"])
+MODULE_PATH = ".".join(["fconv", "core", "Former"])
 
 
 @pytest.mark.parametrize(

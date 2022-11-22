@@ -1,5 +1,5 @@
-from former.formats.json import Json
-from former.formats.yaml import Yaml
+from fconv.formats.json import Json
+from fconv.formats.yaml import Yaml
 
 SUPPORTED_FORMATS = {"json": Json, "yaml": Yaml}
 
