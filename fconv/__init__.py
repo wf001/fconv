@@ -1,5 +1,5 @@
 __doc__ = "Converter between multiple open-standard file formats."
-__version__ = "1.0.2"
+__version__ = "2.0.0"
 __prog__ = "fconv"
 __author__ = "wf001"
 __license__ = "MIT"

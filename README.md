@@ -17,10 +17,10 @@ version: x.x.x
 - Supportted format 
 	- json
 	- yaml
+	- toml
 
 - To be supportted
 	- xml
-	- toml
 	- ini
 
 You can use fconv as command-line tool and Python module.
@@ -32,6 +32,7 @@ See the reference:
 
 - json:https://docs.python.org/3/library/json.html
 - yaml:https://pyyaml.org/wiki/PyYAMLDocumentation
+- toml:https://github.com/uiri/toml
 
 ## Example
 ### Use as a module
