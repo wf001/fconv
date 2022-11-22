@@ -11,6 +11,12 @@ check:
 	make test && \
 		make lint
 
+ci:
+	make test && \
+		black ${TARGET} --check && \
+		isort ${TARGET} --check && \
+		flake8 ${TARGET}
+
 test:
 	pytest --capture=no -vv
 
@@ -18,7 +24,7 @@ lint:
 	make mypy-only && \
 		black ${TARGET} && \
 		isort ${TARGET} && \
-		flake8 ${TARGET} --doctest
+		flake8 ${TARGET}
 
 mypy-only:
 	mypy ${TARGET}
