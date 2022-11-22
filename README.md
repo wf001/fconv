@@ -1,5 +1,5 @@
 # fconv
-Python lib and CLI command that convert between multiple file formats
+fconv is a Command-Line utility and library for converting between multiple file formats such as JSON, YAML.
 
 ## Getting started
 ```
@@ -14,16 +14,17 @@ version: x.x.x
 ## Features
 - Converting a file into other formatted file
 
-- Supportting format 
+- Supportted format 
 	- json
 	- yaml
-	- on going
-		- xml
-		- toml
-		- ini
 
+- To be supportted
+	- xml
+	- toml
+	- ini
 
-- In condition of using as a module, fconv supports optional arguments.
+You can use fconv as command-line tool and Python module.
+In condition of using as a module, fconv supports optional arguments.
 
 To know which options are available,
 
@@ -63,6 +64,13 @@ Convert yaml file into json formated file
 ```
 fconv yaml json -i sample.yaml -o result.json
 ```
+
+
+## Contribution
+Have a look through existing Issues and Pull Requests that you could help with. If you'd like to request a feature or report a bug, please create a GitHub Issue using one of the templates provided.
+
+[See contribution guide->](https://github.com/wf001/fconv/blob/master/CONTRIBUTING.md)
+
 
 ### License
 Licensed under the MIT License.
