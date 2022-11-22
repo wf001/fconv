@@ -12,19 +12,18 @@ version: x.x.x
 ```
 
 ## Features
-- Converting a file into other formatted file
+- Convert a file into other formatted file
 
-- Supportted format 
+- Supported format 
 	- json
 	- yaml
 	- toml
 
-- To be supportted
+- To be supported
 	- xml
 	- ini
 
-You can use fconv as command-line tool and Python module.
-In condition of using as a module, fconv supports optional arguments.
+You can use fconv as command-line tool and Python module.In condition of using as a module, fconv supports optional arguments.
 
 To know which options are available,
 
@@ -50,7 +49,7 @@ See the reference:
 '{\\n   "key1": "value1"\\n}'
 ```
 
-### Use as a CLI command
+### Use as a command-line tool
 Basic usage
 ```
 fconv <source format> <target format> -i <source file name>
