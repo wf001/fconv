@@ -4,6 +4,7 @@ install:
 	pip install -r requirement.txt -r dev-requirement.txt
 
 install-dev:
+	make install &&\
 	pip install --editable .
 
 check:
