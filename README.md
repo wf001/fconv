@@ -17,10 +17,10 @@ version: x.x.x
 - Supportted format 
 	- json
 	- yaml
+	- toml
 
 - To be supportted
 	- xml
-	- toml
 	- ini
 
 You can use fconv as command-line tool and Python module.
