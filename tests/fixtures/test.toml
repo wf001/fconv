@@ -1,0 +1,11 @@
+country = "Japan"
+
+[[user]]
+name = "Taro"
+phone = ["111-222-3333", "222-333-4444"]
+age = 10
+
+[[user]]
+name = "Hanako"
+phone = ["555-666-777"]
+age = 20

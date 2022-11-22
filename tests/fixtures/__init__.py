@@ -6,6 +6,7 @@ from fconv.formats.base import BaseDictionalizeFormat
 FIXTURES_ROOT = Path(__file__).parent
 JSON_FILE_PATH = str(FIXTURES_ROOT / "test.json")
 YAML_FILE_PATH = str(FIXTURES_ROOT / "test.yaml")
+TOML_FILE_PATH = str(FIXTURES_ROOT / "test.toml")
 
 
 class FakeValidFormat(BaseDictionalizeFormat):

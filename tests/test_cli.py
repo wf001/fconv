@@ -6,7 +6,7 @@ import pytest
 from fconv import __prog__
 from fconv.__main__ import main
 
-from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
+from .fixtures import JSON_FILE_PATH, TOML_FILE_PATH, YAML_FILE_PATH
 
 
 @pytest.mark.parametrize(
@@ -14,6 +14,8 @@ from .fixtures import JSON_FILE_PATH, YAML_FILE_PATH
     [
         [__prog__, "json", "yaml", "-i", JSON_FILE_PATH],
         [__prog__, "yaml", "json", "-i", YAML_FILE_PATH],
+        [__prog__, "toml", "json", "-i", TOML_FILE_PATH],
+        [__prog__, "yaml", "toml", "-i", YAML_FILE_PATH],
         [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "-o", YAML_FILE_PATH],
     ],
 )
