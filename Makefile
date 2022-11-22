@@ -19,3 +19,13 @@ lint:
 mypy-only:
 	mypy ${TARGET}
 
+
+publish:
+	make clean &&\
+		make check &&\
+		python setup.py sdist bdist_wheel &&\
+		twine upload --repository testpypi dist/*
+
+
+clean:
+	rm -rf dist build *.egg-info

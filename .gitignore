@@ -1,6 +1,8 @@
 **/run.sh
 assets/**.yaml
 assets/**.json
+build/**
+dist/**
 
 **/.venv*
 **/.env*

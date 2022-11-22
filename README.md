@@ -8,7 +8,7 @@ pip install fconv
 
 ```
 $ fconv --v
-version: 1.0.0
+version: x.x.x
 ```
 
 ## Features
