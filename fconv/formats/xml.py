@@ -23,5 +23,6 @@ class Xml(BaseDictionalizeFormat):
         _body = internal["input_dict"]
         _wrapped["root"] = _body
         _internal["input_dict"] = _wrapped
+        _internal["pretty"] = True if "pretty" not in _internal else _internal["pretty"]
 
         return xml.unparse(**_internal)
