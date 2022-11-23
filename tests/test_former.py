@@ -17,9 +17,34 @@ from .fixtures import JSON_FILE_PATH, TOML_FILE_PATH, YAML_FILE_PATH
 # JSON -> YAML
 ################
 
+TESTSETS = [
+    # src_format, target_format, src_path, target_format_loader
+    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load),
+    (Json, Toml, JSON_FILE_PATH, toml.loads),
+    (Yaml, Json, YAML_FILE_PATH, json.loads),
+    (Yaml, Toml, YAML_FILE_PATH, toml.loads),
+    (Toml, Json, TOML_FILE_PATH, json.loads),
+    (Toml, Yaml, TOML_FILE_PATH, yaml.safe_load),
+]
 
-class TestJsonToYamlIntegration:
-    def test_form_json_file_to_yaml_file(self):
+TESTSETS_WITHARGS = [
+    # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
+    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load, {"parse_int": float}, {"indent": 2}),
+    (Json, Toml, JSON_FILE_PATH, toml.loads, {"parse_int": float}, None),
+    (Yaml, Json, YAML_FILE_PATH, json.loads, None, {"indent": 2}),
+    # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
+    (Toml, Json, TOML_FILE_PATH, json.loads, None, {"indent:2"}),
+    # (Toml, Yaml, TOML_FILE_PATH, yaml.safe_load, None, None), #skip as is redundant
+]
+
+
+class TestIntegration:
+    @pytest.mark.parametrize(
+        "src_format, target_format, src_path, target_format_loader", TESTSETS
+    )
+    def test_form_file_to_file(
+        self, src_format, target_format, src_path, target_format_loader
+    ):
         """
         Confirm converting json file to yaml file
         """
@@ -27,41 +52,51 @@ class TestJsonToYamlIntegration:
         out_name = f"{dt}.yaml"
 
         Former(
-            src_format=Json,
-            target_format=Yaml,
-            src_path=JSON_FILE_PATH,
+            src_format=src_format,
+            target_format=target_format,
+            src_path=src_path,
             target_path=out_name,
         ).form()
 
         # testing
         with open(out_name) as f:
-            act = yaml.safe_load(f.read())
+            act = target_format_loader(f.read())
             assert act["country"] == "Japan"
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
             assert act["user"][1]["phone"][0] == "555-666-777"
         os.remove(out_name)
 
-    def test_form_json_file_to_yaml_str(self):
+    @pytest.mark.parametrize(
+        "src_format, target_format, src_path, target_format_loader", TESTSETS
+    )
+    def test_form_file_to_str(
+        self, src_format, target_format, src_path, target_format_loader
+    ):
         """
         Confirm converting json file to yaml string
         """
 
         r = Former(
-            src_format=Json,
-            target_format=Yaml,
-            src_path=JSON_FILE_PATH,
+            src_format=src_format,
+            target_format=target_format,
+            src_path=src_path,
         ).form()
 
         # testing
         assert type(r) is str
-        act = yaml.safe_load(r)
+        act = target_format_loader(r)
         assert act["country"] == "Japan"
         assert act["user"][0]["age"] == 10
         assert act["user"][1]["name"] == "Hanako"
         assert act["user"][1]["phone"][0] == "555-666-777"
 
-    def test_form_json_str_to_yaml_file(self):
+    @pytest.mark.parametrize(
+        "src_format, target_format, src_path, target_format_loader", TESTSETS
+    )
+    def test_form_str_to_file(
+        self, src_format, target_format, src_path, target_format_loader
+    ):
         """
         Confirm converting json string to yaml file
         """
@@ -69,46 +104,66 @@ class TestJsonToYamlIntegration:
         out_name = f"{dt}.yaml"
 
         src_ctx = None
-        with open(JSON_FILE_PATH) as f:
+        with open(src_path) as f:
             src_ctx = f.read()
 
         Former(
-            src_format=Json,
-            target_format=Yaml,
+            src_format=src_format,
+            target_format=target_format,
             target_path=out_name,
         ).form(src_ctx)
 
         # testing
         with open(out_name) as f:
-            act = yaml.safe_load(f.read())
+            act = target_format_loader(f.read())
             assert act["country"] == "Japan"
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
             assert act["user"][1]["phone"][0] == "555-666-777"
         os.remove(out_name)
 
-    def test_form_json_str_to_yaml_str(self):
+    @pytest.mark.parametrize(
+        "src_format, target_format, src_path, target_format_loader", TESTSETS
+    )
+    def test_form_str_to_str(
+        self, src_format, target_format, src_path, target_format_loader
+    ):
         """
         Confirm converting json string to yaml file
         """
         src_ctx = None
-        with open(JSON_FILE_PATH) as f:
+        with open(src_path) as f:
             src_ctx = f.read()
 
         r = Former(
-            src_format=Json,
-            target_format=Yaml,
+            src_format=src_format,
+            target_format=target_format,
         ).form(src_ctx)
 
         assert type(r) is str
-        act = yaml.safe_load(r)
+        act = target_format_loader(r)
         # testing
         assert act["country"] == "Japan"
         assert act["user"][0]["age"] == 10
         assert act["user"][1]["name"] == "Hanako"
         assert act["user"][1]["phone"][0] == "555-666-777"
 
-    def test_form_json_file_to_yaml_file_with_opt(self):
+    @pytest.mark.parametrize(
+        "src_format, target_format, src_path, target_format_loader, in_opt, out_opt",
+        [
+            (
+                Json,
+                Yaml,
+                JSON_FILE_PATH,
+                yaml.safe_load,
+                {"parse_int": int},
+                {"indent": 2},
+            ),
+        ],
+    )
+    def test_form_file_to_file_with_opt(
+        self, src_format, target_format, src_path, target_format_loader, in_opt, out_opt
+    ):
         """
         json to yaml
         """
@@ -116,570 +171,17 @@ class TestJsonToYamlIntegration:
         out_name = f"{dt}.yaml"
 
         Former(
-            src_format=Json,
-            target_format=Yaml,
-            src_path=JSON_FILE_PATH,
+            src_format=src_format,
+            target_format=target_format,
+            src_path=src_path,
             target_path=out_name,
-            in_opt={"parse_int": float},
-            out_opt={"indent": 2},
+            in_opt=in_opt,
+            out_opt=out_opt,
         ).form()
 
         # testing
         with open(out_name) as f:
-            act = yaml.safe_load(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-
-################
-# YAML -> JSON
-################
-
-
-class TestYamlToJsonIntegration:
-    def test_form_yaml_file_to_json_file(self):
-        """
-        yaml to json
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-
-        Former(Yaml, Json, src_path=YAML_FILE_PATH, target_path=out_name).form()
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_yaml_file_to_json_str(self):
-        """
-        Confirm converting yaml file to json string
-        """
-
-        r = Former(Yaml, Json, src_path=YAML_FILE_PATH).form()
-
-        act = json.loads(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_yaml_str_to_json_file(self):
-        """
-        Confirm converting yaml string to json file
-        """
-
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-        src_ctx = None
-
-        with open(YAML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        Former(Yaml, Json, target_path=out_name).form(src_ctx)
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_yaml_str_to_json_str(self):
-        """
-        Confirm converting yaml string to json string
-        """
-
-        src_ctx = None
-
-        with open(YAML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        r = Former(Yaml, Json).form(src_ctx)
-
-        act = json.loads(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_yaml_file_to_json_file_with_opt(self):
-        """
-        yaml to json
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-
-        Former(
-            Yaml,
-            Json,
-            src_path=YAML_FILE_PATH,
-            target_path=out_name,
-            out_opt={"indent": 3},
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-
-################
-# JSON -> TOML
-################
-
-
-class TestJsonToTomlIntegration:
-    def test_form_json_file_to_toml_file(self):
-        """
-        Confirm converting json file to toml file
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        Former(
-            src_format=Json,
-            target_format=Toml,
-            src_path=JSON_FILE_PATH,
-            target_path=out_name,
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_json_file_to_toml_str(self):
-        """
-        Confirm converting json file to toml string
-        """
-
-        r = Former(
-            src_format=Json,
-            target_format=Toml,
-            src_path=JSON_FILE_PATH,
-        ).form()
-
-        # testing
-        assert type(r) is str
-        act = toml.loads(r)
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_json_str_to_toml_file(self):
-        """
-        Confirm converting json string to toml file
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        src_ctx = None
-        with open(JSON_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        Former(
-            src_format=Json,
-            target_format=Toml,
-            target_path=out_name,
-        ).form(src_ctx)
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_json_str_to_toml_str(self):
-        """
-        Confirm converting json string to toml file
-        """
-        src_ctx = None
-        with open(JSON_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        r = Former(
-            src_format=Json,
-            target_format=Toml,
-        ).form(src_ctx)
-
-        assert type(r) is str
-        act = toml.loads(r)
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    @pytest.mark.skip(reason="needless")
-    def test_form_json_file_to_toml_file_with_opt(self):
-        """
-        json to toml
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        Former(
-            src_format=Json,
-            target_format=Toml,
-            src_path=JSON_FILE_PATH,
-            target_path=out_name,
-            in_opt={"parse_int": float},
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-
-################
-# TOML -> JSON
-################
-class TestTomlToJsonIntegration:
-    def test_form_toml_file_to_json_file(self):
-        """
-        toml to json
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-
-        Former(Toml, Json, src_path=TOML_FILE_PATH, target_path=out_name).form()
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_toml_file_to_json_str(self):
-        """
-        Confirm converting toml file to json string
-        """
-
-        r = Former(Toml, Json, src_path=TOML_FILE_PATH).form()
-
-        act = json.loads(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_toml_str_to_json_file(self):
-        """
-        Confirm converting toml string to json file
-        """
-
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-        src_ctx = None
-
-        with open(TOML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        Former(Toml, Json, target_path=out_name).form(src_ctx)
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_toml_str_to_json_str(self):
-        """
-        Confirm converting toml string to json string
-        """
-
-        src_ctx = None
-
-        with open(TOML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        r = Former(Toml, Json).form(src_ctx)
-
-        act = json.loads(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_toml_file_to_json_file_with_opt(self):
-        """
-        toml to json
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.json"
-
-        Former(
-            Toml,
-            Json,
-            src_path=TOML_FILE_PATH,
-            target_path=out_name,
-            out_opt={"indent": 3},
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = json.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-
-################
-# YAML -> TOML
-################
-class TestYamlToTomlIntegration:
-    def test_form_yaml_file_to_toml_file(self):
-        """
-        Confirm converting yaml file to toml file
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        Former(
-            src_format=Yaml,
-            target_format=Toml,
-            src_path=YAML_FILE_PATH,
-            target_path=out_name,
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_yaml_file_to_toml_str(self):
-        """
-        Confirm converting yaml file to toml string
-        """
-
-        r = Former(
-            src_format=Yaml,
-            target_format=Toml,
-            src_path=YAML_FILE_PATH,
-        ).form()
-
-        # testing
-        assert type(r) is str
-        act = toml.loads(r)
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_yaml_str_to_toml_file(self):
-        """
-        Confirm converting yaml string to toml file
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        src_ctx = None
-        with open(YAML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        Former(
-            src_format=Yaml,
-            target_format=Toml,
-            target_path=out_name,
-        ).form(src_ctx)
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_yaml_str_to_toml_str(self):
-        """
-        Confirm converting yaml string to toml file
-        """
-        src_ctx = None
-        with open(YAML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        r = Former(
-            src_format=Yaml,
-            target_format=Toml,
-        ).form(src_ctx)
-
-        assert type(r) is str
-        act = toml.loads(r)
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    @pytest.mark.skip(reason="needless")
-    def test_form_yaml_file_to_toml_file_with_opt(self):
-        """
-        yaml to toml
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.toml"
-
-        Former(
-            src_format=Yaml,
-            target_format=Toml,
-            src_path=YAML_FILE_PATH,
-            target_path=out_name,
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = toml.loads(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-
-class TestTomlToYamlIntegration:
-    def test_form_toml_file_to_yaml_file(self):
-        """
-        toml to yaml
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.yaml"
-
-        Former(Toml, Yaml, src_path=TOML_FILE_PATH, target_path=out_name).form()
-
-        # testing
-        with open(out_name) as f:
-            act = yaml.safe_load(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_toml_file_to_yaml_str(self):
-        """
-        Confirm converting toml file to yaml string
-        """
-
-        r = Former(Toml, Yaml, src_path=TOML_FILE_PATH).form()
-
-        act = yaml.safe_load(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_toml_str_to_yaml_file(self):
-        """
-        Confirm converting toml string to yaml file
-        """
-
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.yaml"
-        src_ctx = None
-
-        with open(TOML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        Former(Toml, Yaml, target_path=out_name).form(src_ctx)
-
-        # testing
-        with open(out_name) as f:
-            act = yaml.safe_load(f.read())
-            assert act["country"] == "Japan"
-            assert act["user"][0]["age"] == 10
-            assert act["user"][1]["name"] == "Hanako"
-            assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
-
-    def test_form_toml_str_to_yaml_str(self):
-        """
-        Confirm converting toml string to yaml string
-        """
-
-        src_ctx = None
-
-        with open(TOML_FILE_PATH) as f:
-            src_ctx = f.read()
-
-        r = Former(Toml, Yaml).form(src_ctx)
-
-        act = yaml.safe_load(r)
-
-        # testing
-        assert act["country"] == "Japan"
-        assert act["user"][0]["age"] == 10
-        assert act["user"][1]["name"] == "Hanako"
-        assert act["user"][1]["phone"][0] == "555-666-777"
-
-    def test_form_toml_file_to_yaml_file_with_opt(self):
-        """
-        toml to yaml
-        """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.yaml"
-
-        Former(
-            Toml,
-            Yaml,
-            src_path=TOML_FILE_PATH,
-            target_path=out_name,
-            out_opt={"indent": 3},
-        ).form()
-
-        # testing
-        with open(out_name) as f:
-            act = yaml.safe_load(f.read())
+            act = target_format_loader(f.read())
             assert act["country"] == "Japan"
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
