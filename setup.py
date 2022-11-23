@@ -29,5 +29,13 @@ setup(
         ],
     },
     packages=find_packages(include=['fconv', 'fconv.*']),
-    install_requires=_requires_from_file('requirement.txt')
+    install_requires=_requires_from_file('requirement.txt'),
+    classifiers=[
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Text Processing"
+        ]
 )
