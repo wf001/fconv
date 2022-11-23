@@ -1,3 +1,4 @@
+# fmt: off
 import datetime
 import json
 import os
@@ -28,7 +29,8 @@ TESTSETS = [
 
 TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load, {"parse_int": float}, {"indent": 2}),
+    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load,
+     {"parse_int": float}, {"indent": 2}),
     (Json, Toml, JSON_FILE_PATH, toml.loads, {"parse_int": float}, None),
     (Yaml, Json, YAML_FILE_PATH, json.loads, None, {"indent": 2}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
@@ -191,11 +193,14 @@ XML_TESTSETS = [
 
 XML_TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Xml, JSON_FILE_PATH, xml.parse, {"parse_int": int}, {"pretty": True}),
-    (Xml, Json, XML_FILE_PATH, json.loads, {"disable_entities": True}, {"indent": 2}),
+    (Json, Xml, JSON_FILE_PATH, xml.parse,
+     {"parse_int": int}, {"pretty": True}),
+    (Xml, Json, XML_FILE_PATH, json.loads, {
+     "disable_entities": True}, {"indent": 2}),
     (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
-    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load, {"disable_entities": True}, None),
+    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load,
+     {"disable_entities": True}, None),
     # (Toml, Yaml, TOML_FILE_PATH, yaml.safe_load, None, None), #skip as is redundant
     (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
 ]
