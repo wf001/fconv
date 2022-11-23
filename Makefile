@@ -30,8 +30,8 @@ mypy-only:
 	mypy ${TARGET}
 
 build:
-	pip install wheel twine &&\
 	make clean &&\
+	pip install wheel twine &&\
 		make check &&\
 		python setup.py sdist bdist_wheel
 
