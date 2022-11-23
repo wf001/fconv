@@ -175,7 +175,16 @@ class TestFormatsUnit:
 
             _, act_called_kwargs = m_loads.call_args
             assert m_loads.called
-            assert act_called_kwargs == {"input_dict": {"root": "b"}}
+            assert act_called_kwargs == {"input_dict": {"root": "b"}, "pretty": True}
+
+        def test_dump_with_disable_pretty(self, mocker):
+            m_loads = mocker.patch("xmltodict.unparse")
+            src_ctx = {"input_dict": "b", "pretty": False}
+            Xml().dump(src_ctx)
+
+            _, act_called_kwargs = m_loads.call_args
+            assert m_loads.called
+            assert act_called_kwargs == {"input_dict": {"root": "b"}, "pretty": False}
 
         def test_dump_handle_error(self, mocker):
             mocker.patch("xmltodict.unparse").side_effect = Exception()
