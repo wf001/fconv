@@ -25,9 +25,9 @@ version: x.x.x
 	- json
 	- yaml
 	- toml
+	- xml
 
 - To be supported
-	- xml
 	- ini
 
 You can use fconv as command-line tool and Python module.In condition of using as a module, fconv supports optional arguments.
@@ -39,6 +39,7 @@ See the reference:
 - json:https://docs.python.org/3/library/json.html
 - yaml:https://pyyaml.org/wiki/PyYAMLDocumentation
 - toml:https://github.com/uiri/toml
+- xml:https://github.com/martinblech/xmltodict
 
 ## Example
 ### Use as a module

@@ -16,23 +16,12 @@ class Xml(BaseDictionalizeFormat):
     @staticmethod
     def dump(internal: Dict[str, Any]) -> str:
         import xmltodict as xml
-        """
-        {
-            'input_dict':{'country': ...,'..:..'},
-            'opt1':...,
-            'opt2':...
-        }
-        ->
-        {
-            'input_dict':{'root':{'country':'...'}},
-            'opt1':...,
-            'opt2':...
-        }
-        """
-        _internal = {}
-        _body = internal['input_dict']
-        _internal['root'] = _body
-        __internal = internal
-        __internal['input_dict'] = _internal
 
-        return xml.unparse(**__internal)
+        _wrapped = {}
+        _internal = internal
+
+        _body = internal["input_dict"]
+        _wrapped["root"] = _body
+        _internal["input_dict"] = _wrapped
+
+        return xml.unparse(**_internal)

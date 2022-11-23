@@ -4,21 +4,17 @@ import os
 
 import pytest
 import toml
-import yaml
 import xmltodict as xml
+import yaml
 
 from fconv.core import Former
 from fconv.formats.json import Json
 from fconv.formats.toml import Toml
-from fconv.formats.yaml import Yaml
 from fconv.formats.xml import Xml
+from fconv.formats.yaml import Yaml
 
-from .fixtures import (
-    JSON_FILE_PATH,
-    TOML_FILE_PATH,
-    YAML_FILE_PATH,
-    XML_FILE_PATH,
-)
+from .fixtures import (JSON_FILE_PATH, TOML_FILE_PATH, XML_FILE_PATH,
+                       YAML_FILE_PATH)
 
 TESTSETS = [
     # src_format, target_format, src_path, target_format_loader
@@ -32,8 +28,7 @@ TESTSETS = [
 
 TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load,
-     {"parse_int": float}, {"indent": 2}),
+    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load, {"parse_int": float}, {"indent": 2}),
     (Json, Toml, JSON_FILE_PATH, toml.loads, {"parse_int": float}, None),
     (Yaml, Json, YAML_FILE_PATH, json.loads, None, {"indent": 2}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
@@ -153,7 +148,8 @@ class TestIntegration:
         assert act["user"][1]["phone"][0] == "555-666-777"
 
     @pytest.mark.parametrize(
-        "src_format, target_format, src_path, target_format_loader, in_opt, out_opt", TESTSETS_WITHARGS
+        "src_format, target_format, src_path, target_format_loader, in_opt, out_opt",
+        TESTSETS_WITHARGS,
     )
     def test_form_file_to_file_with_opt(
         self, src_format, target_format, src_path, target_format_loader, in_opt, out_opt
@@ -195,18 +191,16 @@ XML_TESTSETS = [
 
 XML_TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Xml, JSON_FILE_PATH, xml.parse,
-     {"parse_int": int}, {"pretty": True}),
+    (Json, Xml, JSON_FILE_PATH, xml.parse, {"parse_int": int}, {"pretty": True}),
     (Xml, Json, XML_FILE_PATH, json.loads, {"disable_entities": True}, {"indent": 2}),
     (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
-    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load, {"disable_entities":True}, None),
+    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load, {"disable_entities": True}, None),
     # (Toml, Yaml, TOML_FILE_PATH, yaml.safe_load, None, None), #skip as is redundant
-    (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty":True}),
+    (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
 ]
 
 
-@pytest.mark.this
 class TestXmlIntegration:
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
@@ -307,7 +301,7 @@ class TestXmlIntegration:
 
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader, in_opt, out_opt",
-        XML_TESTSETS_WITHARGS
+        XML_TESTSETS_WITHARGS,
     )
     def test_form_file_to_file_with_opt(
         self, src_format, target_format, src_path, target_format_loader, in_opt, out_opt
