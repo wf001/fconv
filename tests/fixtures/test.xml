@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<country>Japan</country>
+	<user>
+		<name>Taro</name>
+		<phone>111-222-3333</phone>
+		<phone>222-333-4444</phone>
+		<age>10</age>
+	</user>
+	<user>
+		<name>Hanako</name>
+		<phone>555-666-777</phone>
+		<age>20</age>
+	</user>
+</root>
