@@ -4,6 +4,7 @@ __prog__ = "fconv"
 __author__ = "wf001"
 __license__ = "MIT"
 __url__ = "https://github.com/wf001/fconv"
+__hoge__ = "hoge"
 
 HELP = {
     "source": "data format converting from",
@@ -14,4 +15,8 @@ HELP = {
     "out_opt": "option sets of a file converting to",
     "version": "print version number and exit",
     "debug": "print more information",
+    "json_float_as_str": "print more information",
+    "json_float_as_int": "print more information",
+    "json_int_as_str": "print more information",
+    "json_int_as_float": "print more information",
 }

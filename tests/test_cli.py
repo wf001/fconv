@@ -116,3 +116,34 @@ def test_cli_no_arg(capfd):
     out, err = capfd.readouterr()
     assert "usage:" in err
     assert "error:" in err
+
+class TestCLIOpt:
+    @pytest.mark.parametrize(
+        "argv, expect_opt",
+        [
+            #input opt
+            ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-int"],{"parse_float": "__int"}),
+            ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-str"],{"parse_float": "str"}),
+            ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-float"],{"parse_int":"float"}),
+            ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-str"],{"parse_int":"str"})
+##            (#output opt),
+#            ([__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-skip-keys"],{"skip_keys":True}),
+#            ([__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-ignore-check-circular"],{"check_circular":False}),
+#            ([__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-disallow-nan"],{"sallow_nan":False}),
+#            ([__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-indent 1"],{"indent":}),
+#            ([__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-sort-keys"],{"sort_keys":True})
+        ]
+    )
+    @pytest.mark.this
+    def test_cli_json_opt(self, mocker,argv, expect_opt):
+        mocker.patch("fconv.core.Former._read_file")
+        m_parase_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
+        mocker.patch("fconv.core.Former._parse_from_internal")
+        mocker.patch("fconv.core.Former._write_file")
+        with mock.patch.object(sys, "argv", argv):
+            main()
+        act_parse_to_internal_kwargs,_ = m_parase_to_internal.call_args
+        for k, v in expect_opt.items():
+            assert callable(act_parse_to_internal_kwargs[1][k])
+            assert act_parse_to_internal_kwargs[1][k].__name__ == v
+
