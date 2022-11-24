@@ -1,7 +1,6 @@
 # fmt: off
-import datetime
 import json
-import os
+import sys
 
 import pytest
 import toml
@@ -17,6 +16,7 @@ from fconv.formats.yaml import Yaml
 from .fixtures import (JSON_FILE_PATH, TOML_FILE_PATH, XML_FILE_PATH,
                        YAML_FILE_PATH)
 
+# fmt: on
 TESTSETS = [
     # src_format, target_format, src_path, target_format_loader
     (Json, Yaml, JSON_FILE_PATH, yaml.safe_load),
@@ -29,8 +29,7 @@ TESTSETS = [
 
 TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load,
-     {"parse_int": float}, {"indent": 2}),
+    (Json, Yaml, JSON_FILE_PATH, yaml.safe_load, {"parse_int": float}, {"indent": 2}),
     (Json, Toml, JSON_FILE_PATH, toml.loads, {"parse_int": float}, None),
     (Yaml, Json, YAML_FILE_PATH, json.loads, None, {"indent": 2}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
@@ -44,13 +43,13 @@ class TestIntegration:
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_file_to_file(
-        self, src_format, target_format, src_path, target_format_loader
+        self, dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json file to yaml file
         """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         Former(
             src_format=src_format,
@@ -66,13 +65,12 @@ class TestIntegration:
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
             assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
 
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_file_to_str(
-        self, src_format, target_format, src_path, target_format_loader
+        self, dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json file to yaml string
@@ -96,13 +94,13 @@ class TestIntegration:
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_str_to_file(
-        self, src_format, target_format, src_path, target_format_loader
+        self, dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json string to yaml file
         """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         src_ctx = None
         with open(src_path) as f:
@@ -121,7 +119,6 @@ class TestIntegration:
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
             assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
 
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader", TESTSETS
@@ -154,13 +151,20 @@ class TestIntegration:
         TESTSETS_WITHARGS,
     )
     def test_form_file_to_file_with_opt(
-        self, src_format, target_format, src_path, target_format_loader, in_opt, out_opt
+        self,
+        dir,
+        src_format,
+        target_format,
+        src_path,
+        target_format_loader,
+        in_opt,
+        out_opt,
     ):
         """
         json to yaml
         """
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         Former(
             src_format=src_format,
@@ -178,7 +182,6 @@ class TestIntegration:
             assert act["user"][0]["age"] == 10
             assert act["user"][1]["name"] == "Hanako"
             assert act["user"][1]["phone"][0] == "555-666-777"
-        os.remove(out_name)
 
 
 XML_TESTSETS = [
@@ -193,16 +196,12 @@ XML_TESTSETS = [
 
 XML_TESTSETS_WITHARGS = [
     # src_format, target_format, src_path, target_format_loader, in_opt, out_opt
-    (Json, Xml, JSON_FILE_PATH, xml.parse,
-     {"parse_int": int}, {"pretty": True}),
-    (Xml, Json, XML_FILE_PATH, json.loads, {
-     "disable_entities": True}, {"indent": 2}),
+    (Json, Xml, JSON_FILE_PATH, xml.parse, {"parse_int": int}, {"pretty": True}),
+    (Xml, Json, XML_FILE_PATH, json.loads, {"disable_entities": True}, {"indent": 2}),
     (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
     # (Yaml, Toml, YAML_FILE_PATH, toml.loads, None, None), #skip as is redundant
-    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load,
-     {"disable_entities": True}, None),
+    (Xml, Yaml, XML_FILE_PATH, yaml.safe_load, {"disable_entities": True}, None),
     # (Toml, Yaml, TOML_FILE_PATH, yaml.safe_load, None, None), #skip as is redundant
-    (Yaml, Xml, YAML_FILE_PATH, xml.parse, None, {"pretty": True}),
 ]
 
 
@@ -211,10 +210,10 @@ class TestXmlIntegration:
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
     )
     def test_form_file_to_file(
-        self, src_format, target_format, src_path, target_format_loader
+        self, dir, src_format, target_format, src_path, target_format_loader
     ):
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         Former(
             src_format=src_format,
@@ -230,7 +229,6 @@ class TestXmlIntegration:
             assert act["root"]["user"][0]["age"] == "10"
             assert act["root"]["user"][1]["name"] == "Hanako"
             assert act["root"]["user"][1]["phone"] == "555-666-777"
-        os.remove(out_name)
 
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
@@ -257,10 +255,10 @@ class TestXmlIntegration:
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
     )
     def test_form_str_to_file(
-        self, src_format, target_format, src_path, target_format_loader
+        self, dir, src_format, target_format, src_path, target_format_loader
     ):
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         src_ctx = None
         with open(src_path) as f:
@@ -279,7 +277,6 @@ class TestXmlIntegration:
             assert act["root"]["user"][0]["age"] == "10"
             assert act["root"]["user"][1]["name"] == "Hanako"
             assert act["root"]["user"][1]["phone"] == "555-666-777"
-        os.remove(out_name)
 
     @pytest.mark.parametrize(
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
@@ -309,10 +306,17 @@ class TestXmlIntegration:
         XML_TESTSETS_WITHARGS,
     )
     def test_form_file_to_file_with_opt(
-        self, src_format, target_format, src_path, target_format_loader, in_opt, out_opt
+        self,
+        dir,
+        src_format,
+        target_format,
+        src_path,
+        target_format_loader,
+        in_opt,
+        out_opt,
     ):
-        dt = datetime.datetime.now().strftime("%Y%m%d-%H:%M:%S")
-        out_name = f"{dt}.out"
+        func = sys._getframe().f_code.co_name
+        out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
 
         Former(
             src_format=src_format,
@@ -331,4 +335,3 @@ class TestXmlIntegration:
             assert act["root"]["user"][0]["age"] == "10"
             assert act["root"]["user"][1]["name"] == "Hanako"
             assert act["root"]["user"][1]["phone"] == "555-666-777"
-        os.remove(out_name)
