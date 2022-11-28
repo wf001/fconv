@@ -85,9 +85,9 @@ def _set_opts() -> Namespace:
 def parse_args(a):
     in_opt, out_opt = {}, {}
     if a.json_float_as_int and a.json_float_as_str:
-        raise Exception()
+        raise ValueError("It can use either --json-float-as-int or --json-float-as-str ")
     if a.json_int_as_str and a.json_int_as_float:
-        raise Exception()
+        raise ValueError("It can use either --json-int-as-float or --json-int-as-str ")
 
     # FIXME: too redundant
     # json input
@@ -126,9 +126,9 @@ def parse_args(a):
         out_opt["indent"] = a.yaml_indent
     # xml input
     if a.xml_process_namespaces:
-        out_opt["process_namespaces"] = True
+        in_opt["process_namespaces"] = True
     if a.xml_process_comments:
-        out_opt["process_comments"] = True
+        in_opt["process_comments"] = True
     # xml output
     if a.xml_particle_document:
         out_opt["full_document"] = False
