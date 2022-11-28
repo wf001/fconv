@@ -92,8 +92,6 @@ def test_cli_invalid_args(capfd, args, err_msg):
     assert err_msg[1] in err
 
 
-
-
 def test_cli_print_version(capfd):
     argv = [__prog__, "--v"]
     with pytest.raises(SystemExit):
@@ -134,7 +132,7 @@ def test_cli_print_help(capfd):
         ),
     ],
 )
-def test_cli_json_opt_callable(mocker, argv, expect_opt):
+def test_cli_opt_callable(mocker, argv, expect_opt):
     mocker.patch("fconv.core.Former._read_file")
     m_parase_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
     mocker.patch("fconv.core.Former._parse_from_internal")
@@ -147,6 +145,7 @@ def test_cli_json_opt_callable(mocker, argv, expect_opt):
     k, v = list(expect_opt.items())[0]
     assert callable(act_parse_to_internal_kwargs[1][k])
     assert act_parse_to_internal_kwargs[1][k].__name__ == v
+
 
 @pytest.mark.parametrize(
     "argv, expect_opt",
@@ -187,6 +186,7 @@ def test_cli_opt_in(mocker, argv, expect_opt):
 
     act_parse_to_internal_kwargs, _ = m_parse_to_internal.call_args
     assert act_parse_to_internal_kwargs[1] == expect_opt
+
 
 @pytest.mark.parametrize(
     "argv, expect_opt",
@@ -275,6 +275,8 @@ def test_cli_opt_out(mocker, argv, expect_opt):
 
     act_parse_from_internal_kwargs, _ = m_parse_from_internal.call_args
     assert act_parse_from_internal_kwargs[1] == expect_opt
+
+
 @pytest.mark.parametrize(
     "argv, expect_in_opt, expect_out_opt",
     [
@@ -287,7 +289,7 @@ def test_cli_opt_out(mocker, argv, expect_opt):
                 YAML_FILE_PATH,
                 "--json-ignore-check-circular",
                 "--json-indent",
-                "3"
+                "3",
             ],
             {},
             {"check_circular": False, "indent": 3},
@@ -304,7 +306,7 @@ def test_cli_opt_out(mocker, argv, expect_opt):
                 "--yaml-explicit-end",
             ],
             {"process_comments": True},
-            {"explicit_start": True,"explicit_end":True}
+            {"explicit_start": True, "explicit_end": True},
         ),
     ],
 )
@@ -328,12 +330,32 @@ def test_cli_multi_opt(mocker, argv, expect_in_opt, expect_out_opt):
 @pytest.mark.parametrize(
     "args",
     [
-        ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-int", "--json-float-as-str"]),
-        ([__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-float", "--json-int-as-str"]),
+        (
+            [
+                __prog__,
+                "json",
+                "yaml",
+                "-i",
+                JSON_FILE_PATH,
+                "--json-float-as-int",
+                "--json-float-as-str",
+            ]
+        ),
+        (
+            [
+                __prog__,
+                "json",
+                "yaml",
+                "-i",
+                JSON_FILE_PATH,
+                "--json-int-as-float",
+                "--json-int-as-str",
+            ]
+        ),
     ],
 )
 def test_cli_duplicate_options(capfd, args):
     with pytest.raises(ValueError) as e:
         with mock.patch.object(sys, "argv", args):
             main()
-    assert "It can use either" in str(e) 
+    assert "It can use either" in str(e)
