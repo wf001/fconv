@@ -23,7 +23,7 @@ from .fixtures import (JSON_FILE_PATH, TOML_FILE_PATH, XML_FILE_PATH,
         [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "-o", YAML_FILE_PATH],
     ],
 )
-def test_cli_valid_args(mocker, capfd, argv):
+def test_cli_valid_basic_args(mocker, capfd, argv):
     mocker.patch("fconv.core.Former._read_file")
     m_parse_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
     m_parse_from_internal = mocker.patch("fconv.core.Former._parse_from_internal")
@@ -44,7 +44,7 @@ def test_cli_valid_args(mocker, capfd, argv):
         [__prog__, "yaml", "json", "-i", YAML_FILE_PATH],
     ],
 )
-def test_cli_print_out(mocker, capfd, argv):
+def test_cli_printed_out(mocker, capfd, argv):
     m_form = mocker.patch("fconv.core.Former.form")
     m_form.return_value = "result printed out"
     out = None
@@ -62,7 +62,7 @@ def test_cli_print_out(mocker, capfd, argv):
         [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "-o", JSON_FILE_PATH],
     ],
 )
-def test_cli_not_print_out(mocker, capfd, argv):
+def test_cli_not_printed_out(mocker, capfd, argv):
     m_form = mocker.patch("fconv.core.Former.form")
     m_form.return_value = "result printed out"
     out = None
@@ -74,30 +74,22 @@ def test_cli_not_print_out(mocker, capfd, argv):
 
 
 @pytest.mark.parametrize(
-    "args",
+    "args, err_msg",
     [
-        [__prog__, "json"],
-        [__prog__, "json", "yaml"],
-        [__prog__, "json", "-i", "test.json"],
+        ([__prog__], ["required:", "error:"]),
+        ([__prog__, "json"], ["required:", "error:"]),
+        ([__prog__, "json", "yaml"], ["required:", "error:"]),
+        ([__prog__, "json", "-i", "test.json"], ["required:", "error:"]),
+        ([__prog__, "json", "yaml", "-i"], ["expected one argument", "error:"]),
     ],
 )
-def test_cli_invalid_args1(capfd, args):
+def test_cli_invalid_args(capfd, args, err_msg):
     with pytest.raises(SystemExit):
         with mock.patch.object(sys, "argv", args):
             main()
     out, err = capfd.readouterr()
-    assert "required:" in err
-    assert "error:" in err
-
-
-@pytest.mark.parametrize("args", [[__prog__, "json", "yaml", "-i"]])
-def test_cli_invalid_args2(capfd, args):
-    with pytest.raises(SystemExit):
-        with mock.patch.object(sys, "argv", args):
-            main()
-    out, err = capfd.readouterr()
-    assert "expected one argument" in err
-    assert "error:" in err
+    assert err_msg[0] in err
+    assert err_msg[1] in err
 
 
 def test_cli_print_version(capfd):
@@ -118,160 +110,252 @@ def test_cli_print_help(capfd):
     assert "usage:" in out
 
 
-def test_cli_no_arg(capfd):
-    argv = [__prog__]
-    with pytest.raises(SystemExit):
-        with mock.patch.object(sys, "argv", argv):
+@pytest.mark.parametrize(
+    "argv, expect_opt",
+    [
+        # input opt
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-int"],
+            {"parse_float": "__int"},
+        ),
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-str"],
+            {"parse_float": "str"},
+        ),
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-float"],
+            {"parse_int": "float"},
+        ),
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-str"],
+            {"parse_int": "str"},
+        ),
+    ],
+)
+def test_cli_opt_callable(mocker, argv, expect_opt):
+    mocker.patch("fconv.core.Former._read_file")
+    m_parase_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
+    mocker.patch("fconv.core.Former._parse_from_internal")
+    mocker.patch("fconv.core.Former._write_file")
+
+    with mock.patch.object(sys, "argv", argv):
+        main()
+
+    act_parse_to_internal_kwargs, _ = m_parase_to_internal.call_args
+    k, v = list(expect_opt.items())[0]
+    assert callable(act_parse_to_internal_kwargs[1][k])
+    assert act_parse_to_internal_kwargs[1][k].__name__ == v
+
+
+@pytest.mark.parametrize(
+    "argv, expect_opt",
+    [
+        # YAML input opt
+        (
+            [
+                __prog__,
+                "xml",
+                "yaml",
+                "-i",
+                XML_FILE_PATH,
+                "--xml-process-namespaces",
+            ],
+            {"process_namespaces": True},
+        ),
+        (
+            [
+                __prog__,
+                "xml",
+                "yaml",
+                "-i",
+                XML_FILE_PATH,
+                "--xml-process-comments",
+            ],
+            {"process_comments": True},
+        ),
+    ],
+)
+def test_cli_opt_in(mocker, argv, expect_opt):
+    mocker.patch("fconv.core.Former._read_file")
+    m_parse_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
+    mocker.patch("fconv.core.Former._parse_from_internal")
+    mocker.patch("fconv.core.Former._write_file")
+
+    with mock.patch.object(sys, "argv", argv):
+        main()
+
+    act_parse_to_internal_kwargs, _ = m_parse_to_internal.call_args
+    assert act_parse_to_internal_kwargs[1] == expect_opt
+
+
+@pytest.mark.parametrize(
+    "argv, expect_opt",
+    [
+        # JSON output opt
+        (
+            [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-skip-keys"],
+            {"skipkeys": True},
+        ),
+        (
+            [
+                __prog__,
+                "yaml",
+                "json",
+                "-i",
+                YAML_FILE_PATH,
+                "--json-ignore-check-circular",
+            ],
+            {"check_circular": False},
+        ),
+        (
+            [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-disallow-nan"],
+            {"allow_nan": False},
+        ),
+        (
+            [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-indent", "1"],
+            {"indent": 1},
+        ),
+        (
+            [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-sort-keys"],
+            {"sort_keys": True},
+        ),
+        # YAML output opt
+        (
+            [
+                __prog__,
+                "json",
+                "yaml",
+                "-i",
+                JSON_FILE_PATH,
+                "--yaml-explicit-start",
+            ],
+            {"explicit_start": True},
+        ),
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-explicit-end"],
+            {"explicit_end": True},
+        ),
+        (
+            [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-indent", "1"],
+            {"indent": 1},
+        ),
+        # XML input opt
+        (
+            [
+                __prog__,
+                "json",
+                "xml",
+                "-i",
+                JSON_FILE_PATH,
+                "--xml-particle-document",
+            ],
+            {"full_document": False},
+        ),
+        (
+            [
+                __prog__,
+                "json",
+                "xml",
+                "-i",
+                JSON_FILE_PATH,
+                "--xml-disable-pretty",
+            ],
+            {"pretty": False},
+        ),
+    ],
+)
+def test_cli_opt_out(mocker, argv, expect_opt):
+    mocker.patch("fconv.core.Former._read_file")
+    mocker.patch("fconv.core.Former._parse_to_internal")
+    m_parse_from_internal = mocker.patch("fconv.core.Former._parse_from_internal")
+    mocker.patch("fconv.core.Former._write_file")
+
+    with mock.patch.object(sys, "argv", argv):
+        main()
+
+    act_parse_from_internal_kwargs, _ = m_parse_from_internal.call_args
+    assert act_parse_from_internal_kwargs[1] == expect_opt
+
+
+@pytest.mark.parametrize(
+    "argv, expect_in_opt, expect_out_opt",
+    [
+        (
+            [
+                __prog__,
+                "yaml",
+                "json",
+                "-i",
+                YAML_FILE_PATH,
+                "--json-ignore-check-circular",
+                "--json-indent",
+                "3",
+            ],
+            {},
+            {"check_circular": False, "indent": 3},
+        ),
+        (
+            [
+                __prog__,
+                "xml",
+                "yaml",
+                "-i",
+                XML_FILE_PATH,
+                "--xml-process-comments",
+                "--yaml-explicit-start",
+                "--yaml-explicit-end",
+            ],
+            {"process_comments": True},
+            {"explicit_start": True, "explicit_end": True},
+        ),
+    ],
+)
+@pytest.mark.this
+def test_cli_multi_opt(mocker, argv, expect_in_opt, expect_out_opt):
+    mocker.patch("fconv.core.Former._read_file")
+    m_parse_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
+    m_parse_from_internal = mocker.patch("fconv.core.Former._parse_from_internal")
+    mocker.patch("fconv.core.Former._write_file")
+
+    with mock.patch.object(sys, "argv", argv):
+        main()
+
+    act_parse_to_internal_kwargs, _ = m_parse_to_internal.call_args
+    act_parse_from_internal_kwargs, _ = m_parse_from_internal.call_args
+    print(m_parse_to_internal.call_args)
+    assert act_parse_to_internal_kwargs[1] == expect_in_opt
+    assert act_parse_from_internal_kwargs[1] == expect_out_opt
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        (
+            [
+                __prog__,
+                "json",
+                "yaml",
+                "-i",
+                JSON_FILE_PATH,
+                "--json-float-as-int",
+                "--json-float-as-str",
+            ]
+        ),
+        (
+            [
+                __prog__,
+                "json",
+                "yaml",
+                "-i",
+                JSON_FILE_PATH,
+                "--json-int-as-float",
+                "--json-int-as-str",
+            ]
+        ),
+    ],
+)
+def test_cli_duplicate_options(capfd, args):
+    with pytest.raises(ValueError) as e:
+        with mock.patch.object(sys, "argv", args):
             main()
-    out, err = capfd.readouterr()
-    assert "usage:" in err
-    assert "error:" in err
-
-
-class TestCLIOpt:
-    @pytest.mark.parametrize(
-        "argv, expect_opt",
-        [
-            # input opt
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-int"],
-                {"parse_float": "__int"},
-            ),
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-float-as-str"],
-                {"parse_float": "str"},
-            ),
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-float"],
-                {"parse_int": "float"},
-            ),
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--json-int-as-str"],
-                {"parse_int": "str"},
-            ),
-        ],
-    )
-    def test_cli_json_opt_callable(self, mocker, argv, expect_opt):
-        mocker.patch("fconv.core.Former._read_file")
-        m_parase_to_internal = mocker.patch("fconv.core.Former._parse_to_internal")
-        mocker.patch("fconv.core.Former._parse_from_internal")
-        mocker.patch("fconv.core.Former._write_file")
-
-        with mock.patch.object(sys, "argv", argv):
-            main()
-
-        act_parse_to_internal_kwargs, _ = m_parase_to_internal.call_args
-        k, v = list(expect_opt.items())[0]
-        assert callable(act_parse_to_internal_kwargs[1][k])
-        assert act_parse_to_internal_kwargs[1][k].__name__ == v
-
-    @pytest.mark.parametrize(
-        "argv, expect_opt",
-        [
-            # JSON output opt
-            (
-                [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-skip-keys"],
-                {"skipkeys": True},
-            ),
-            (
-                [
-                    __prog__,
-                    "yaml",
-                    "json",
-                    "-i",
-                    YAML_FILE_PATH,
-                    "--json-ignore-check-circular",
-                ],
-                {"check_circular": False},
-            ),
-            (
-                [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-disallow-nan"],
-                {"allow_nan": False},
-            ),
-            (
-                [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-indent", "1"],
-                {"indent": 1},
-            ),
-            (
-                [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-sort-keys"],
-                {"sort_keys": True},
-            ),
-            # YAML output opt
-            (
-                [
-                    __prog__,
-                    "json",
-                    "yaml",
-                    "-i",
-                    JSON_FILE_PATH,
-                    "--yaml-explicit-start",
-                ],
-                {"explicit_start": True},
-            ),
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-explicit-end"],
-                {"explicit_end": True},
-            ),
-            (
-                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-indent", "1"],
-                {"indent": 1},
-            ),
-            # XML input opt
-            (
-                [
-                    __prog__,
-                    "xml",
-                    "yaml",
-                    "-i",
-                    XML_FILE_PATH,
-                    "--xml-process-namespaces",
-                ],
-                {"process_namespaces": True},
-            ),
-            (
-                [
-                    __prog__,
-                    "xml",
-                    "yaml",
-                    "-i",
-                    XML_FILE_PATH,
-                    "--xml-process-comments",
-                ],
-                {"process_comments": True},
-            ),
-            (
-                [
-                    __prog__,
-                    "json",
-                    "xml",
-                    "-i",
-                    JSON_FILE_PATH,
-                    "--xml-particle-document",
-                ],
-                {"full_document": False},
-            ),
-            (
-                [
-                    __prog__,
-                    "json",
-                    "xml",
-                    "-i",
-                    JSON_FILE_PATH,
-                    "--xml-disable-pretty",
-                ],
-                {"pretty": False},
-            ),
-        ],
-    )
-    @pytest.mark.this
-    def test_cli_opt(self, mocker, argv, expect_opt):
-        mocker.patch("fconv.core.Former._read_file")
-        mocker.patch("fconv.core.Former._parse_to_internal")
-        m_parse_from_internal = mocker.patch("fconv.core.Former._parse_from_internal")
-        mocker.patch("fconv.core.Former._write_file")
-
-        with mock.patch.object(sys, "argv", argv):
-            main()
-
-        act_parse_to_internal_kwargs, _ = m_parse_from_internal.call_args
-        assert act_parse_to_internal_kwargs[1] == expect_opt
+    assert "It can use either" in str(e)
