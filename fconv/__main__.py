@@ -12,9 +12,19 @@ def _set_opts() -> Namespace:
     p = argparse.ArgumentParser(prog=__prog__, description=__doc__)
 
     # Required
-    p.add_argument("source", help=HELP["source"], choices=get_supported_formats())
+    p.add_argument(
+        "source",
+        help=HELP["source"],
+        choices=get_supported_formats(),
+        metavar="source-format",
+    )
     p.add_argument("-i", required=True, help=HELP["infile"])
-    p.add_argument("target", help=HELP["target"], choices=get_supported_formats())
+    p.add_argument(
+        "target",
+        help=HELP["target"],
+        choices=get_supported_formats(),
+        metavar="target-format",
+    )
 
     # Optional
     p.add_argument(
