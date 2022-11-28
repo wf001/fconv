@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from fconv import __prog__
+from fconv import __prog__, __version__
 from fconv.__main__ import main
 
 # fmt: off
@@ -98,7 +98,8 @@ def test_cli_print_version(capfd):
         with mock.patch.object(sys, "argv", argv):
             main()
     out, err = capfd.readouterr()
-    assert "version" in out
+    assert __prog__ in out
+    assert __version__ in out
 
 
 def test_cli_print_help(capfd):
