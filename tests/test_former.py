@@ -330,7 +330,6 @@ class TestXmlIntegration:
         # testing
         with open(out_name) as f:
             act = target_format_loader(f.read())
-            print(act)
             assert act["root"]["country"] == "Japan"
             assert act["root"]["user"][0]["age"] == "10"
             assert act["root"]["user"][1]["name"] == "Hanako"

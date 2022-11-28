@@ -8,28 +8,98 @@ from fconv.formats import SUPPORTED_FORMATS, get_supported_formats
 from fconv.util import Logger
 
 
-def parse_args() -> Namespace:
+def _set_opts() -> Namespace:
     p = argparse.ArgumentParser(prog=__prog__, description=__doc__)
 
-    p.add_argument(
-        "--v", help=HELP["version"], action="version", version=f"version: {__version__}"
-    ),
-    p.add_argument("-o", help=HELP["outfile"]),
-    p.add_argument("--debug", help=HELP["debug"], action="store_true")
-
+    # Required
     p.add_argument("source", help=HELP["source"], choices=get_supported_formats())
     p.add_argument("-i", required=True, help=HELP["infile"])
     p.add_argument("target", help=HELP["target"], choices=get_supported_formats())
-    args = p.parse_args()
 
-    return args
+    # Optional
+    p.add_argument(
+        "--v", help=HELP["version"], action="version", version=f"version: {__version__}"
+    ),
+    p.add_argument("--debug", help=HELP["debug"], action="store_true")
+
+    p.add_argument("-o", help=HELP["outfile"])
+    # json input
+    p.add_argument(
+        "--json-float-as-int", help=HELP["json_float_as_int"], action="store_true"
+    )
+    p.add_argument(
+        "--json-float-as-str", help=HELP["json_float_as_str"], action="store_true"
+    )
+    p.add_argument(
+        "--json-int-as-float", help=HELP["json_int_as_float"], action="store_true"
+    )
+    p.add_argument(
+        "--json-int-as-str", help=HELP["json_int_as_str"], action="store_true"
+    )
+    # json output
+    p.add_argument("--json-skip-keys", help=HELP["json_skip_keys"], action="store_true")
+    p.add_argument(
+        "--json-ignore-check-circular",
+        help=HELP["json_ignore_check_circular"],
+        action="store_true",
+    )
+    p.add_argument(
+        "--json-disallow-nan", help=HELP["json_disallow_nan"], action="store_true"
+    )
+    p.add_argument("--json-indent", help=HELP["json_indent"], type=int)
+    p.add_argument("--json-sort-keys", help=HELP["json_sort_keys"], action="store_true")
+
+    a = p.parse_args()
+    return a
+
+
+def parse_args(a):
+    in_opt, out_opt = {}, {}
+    if a.json_float_as_int and a.json_float_as_str:
+        raise Exception()
+    if a.json_int_as_str and a.json_int_as_float:
+        raise Exception()
+
+    # FIXME: too redundant
+    # json input
+    if a.json_float_as_int:
+        in_opt["parse_float"] = __int
+    elif a.json_float_as_str:
+        in_opt["parse_float"] = str
+
+    if a.json_int_as_float:
+        in_opt["parse_int"] = float
+    elif a.json_int_as_str:
+        in_opt["parse_int"] = str
+
+    # json output
+    if a.json_skip_keys:
+        out_opt["skipkeys"] = True
+
+    if a.json_ignore_check_circular:
+        out_opt["check_circular"] = False
+
+    if a.json_disallow_nan:
+        out_opt["allow_nan"] = False
+
+    if a.json_indent is not None:
+        out_opt["indent"] = a.json_indent  # type:ignore
+
+    if a.json_sort_keys:
+        out_opt["sort_keys"] = a.json_sort_keys
+
+    return in_opt, out_opt
+
+
+def __int(x):
+    return int(float(x))
 
 
 def main() -> None:
     """
     Enterypoint for CLI command 'fconv'
     """
-    p = parse_args()
+    p = _set_opts()
     llevel = DEBUG if p.debug else ERROR
     Logger(llevel)
 
@@ -38,11 +108,15 @@ def main() -> None:
     src_path = p.i
     target_path = p.o
 
+    in_opt, out_opt = parse_args(p)
+
     r = Former(
         src_format=SUPPORTED_FORMATS.get(src_fmt),
         target_format=SUPPORTED_FORMATS.get(target_fmt),
         src_path=src_path,
         target_path=target_path,
+        in_opt=in_opt,
+        out_opt=out_opt,
     ).form()
 
     if not target_path:
