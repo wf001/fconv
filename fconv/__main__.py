@@ -28,7 +28,10 @@ def _set_opts() -> Namespace:
 
     # Optional
     p.add_argument(
-        "--v", help=HELP["version"], action="version", version=f"version: {__version__}"
+        "--v",
+        help=HELP["version"],
+        action="version",
+        version=f"{__prog__}: v{__version__}",
     ),
     p.add_argument("--debug", help=HELP["debug"], action="store_true")
 
