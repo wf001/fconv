@@ -9,30 +9,30 @@ from fconv.util import Logger, logg
 class Former:
     """Object for converting input file or string into other formatted file or string.
     Keyword Arguments:
-        - src_format (Required) -- The format name of the file converting from.
-        - target_format (Required) -- The format name of the file converting to.
-        - src_path -- The name of the file converting from.
-        - target_path -- The name of the file converting to.
-        - in_opt -- The option sets of file format converting from.
-        - out_opt -- The option sets of file format converting to.
+        - `src_format` (Required)       :The format name of the file converting from.
+        - `target_format` (Required)    :The format name of the file converting to.
+        - `src_path`                    :The name of the file converting from.
+        - `target_path`                 :The name of the file converting to.
+        - `in_opt`                      :The option sets of file format converting from.
+        - `out_opt`                     :The option sets of file format converting to.
 
         To know which options are available,
         See the reference:
             - json -- https://docs.python.org/3/library/json.html
             - yaml -- https://pyyaml.org/wiki/PyYAMLDocumentation
 
-        Example:
-            >>> from fconv.core import Former
-            >>> from fconv.formats.json import Json
-            >>> from fconv.formats.yaml import Yaml
-            >>> f = Former(src_format=Json, target_format=Yaml)
+    Example:
+        >>> from fconv.core import Former
+        >>> from fconv.formats.json import Json
+        >>> from fconv.formats.yaml import Yaml
+        >>> f = Former(src_format=Json, target_format=Yaml)
 
-            >>> f.form('{"key1":"value1"}')
-            'key1: value1\\n'
+        >>> f.form('{"key1":"value1"}')
+        'key1: value1\\n'
 
-            >>> f = Former(src_format=Yaml, target_format=Json, out_opt={'indent':3})
-            >>> f.form('key1: value1\\n')
-            '{\\n   "key1": "value1"\\n}'
+        >>> f = Former(src_format=Yaml, target_format=Json, out_opt={'indent':3})
+        >>> f.form('key1: value1\\n')
+        '{\\n   "key1": "value1"\\n}'
 
     """
 
