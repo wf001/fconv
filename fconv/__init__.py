@@ -29,4 +29,10 @@ HELP = {
     "yaml_explicit_start": "add explicit start marker(See also https://yaml.org/spec/1.2.2/#914-explicit-documents)",
     "yaml_explicit_end": "add explicit end marker(See also https://yaml.org/spec/1.2.2/#914-explicit-documents)",
     "yaml_indent": "YAML array elements and object members will be pretty-printed with that indent level. ",
+    # xml input
+    "xml_process_namespaces": "enable namespace support(See more info at https://github.com/martinblech/xmltodict#namespace-support)",
+    "xml_process_comments": "treat comments directives as an attribute",
+    # xml output
+    "xml_particle_document": "disable to add document root attribute",
+    "xml_disable_pretty": "disable XML document to be pretty-printed with indent",
 }
