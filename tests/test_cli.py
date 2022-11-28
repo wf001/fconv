@@ -164,7 +164,7 @@ class TestCLIOpt:
     @pytest.mark.parametrize(
         "argv, expect_opt",
         [
-            # output opt
+            # JSON output opt
             (
                 [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-skip-keys"],
                 {"skipkeys": True},
@@ -192,9 +192,30 @@ class TestCLIOpt:
                 [__prog__, "yaml", "json", "-i", YAML_FILE_PATH, "--json-sort-keys"],
                 {"sort_keys": True},
             ),
+            # YAML output opt
+            (
+                [
+                    __prog__,
+                    "json",
+                    "yaml",
+                    "-i",
+                    JSON_FILE_PATH,
+                    "--yaml-explicit-start",
+                ],
+                {"explicit_start": True},
+            ),
+            (
+                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-explicit-end"],
+                {"explicit_end": True},
+            ),
+            (
+                [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-indent", "1"],
+                {"indent": 1},
+            ),
         ],
     )
-    def test_cli_json_opt(self, mocker, argv, expect_opt):
+    @pytest.mark.this
+    def test_cli_opt(self, mocker, argv, expect_opt):
         mocker.patch("fconv.core.Former._read_file")
         mocker.patch("fconv.core.Former._parse_to_internal")
         m_parse_from_internal = mocker.patch("fconv.core.Former._parse_from_internal")

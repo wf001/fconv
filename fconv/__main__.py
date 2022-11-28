@@ -49,6 +49,15 @@ def _set_opts() -> Namespace:
     p.add_argument("--json-indent", help=HELP["json_indent"], type=int)
     p.add_argument("--json-sort-keys", help=HELP["json_sort_keys"], action="store_true")
 
+    # yaml output
+    p.add_argument(
+        "--yaml-explicit-start", help=HELP["yaml_explicit_start"], action="store_true"
+    )
+    p.add_argument(
+        "--yaml-explicit-end", help=HELP["yaml_explicit_end"], action="store_true"
+    )
+    p.add_argument("--yaml-indent", help=HELP["yaml_indent"], type=int)
+
     a = p.parse_args()
     return a
 
@@ -88,6 +97,13 @@ def parse_args(a):
     if a.json_sort_keys:
         out_opt["sort_keys"] = a.json_sort_keys
 
+    # yaml output
+    if a.yaml_explicit_start:
+        out_opt["explicit_start"] = True
+    if a.yaml_explicit_end:
+        out_opt["explicit_end"] = True
+    if a.yaml_indent is not None:
+        out_opt["indent"] = a.yaml_indent
     return in_opt, out_opt
 
 
