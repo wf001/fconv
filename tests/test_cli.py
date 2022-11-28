@@ -6,7 +6,11 @@ import pytest
 from fconv import __prog__
 from fconv.__main__ import main
 
-from .fixtures import JSON_FILE_PATH, TOML_FILE_PATH, YAML_FILE_PATH
+# fmt: off
+from .fixtures import (JSON_FILE_PATH, TOML_FILE_PATH, XML_FILE_PATH,
+                       YAML_FILE_PATH)
+
+# fmt: on
 
 
 @pytest.mark.parametrize(
@@ -211,6 +215,51 @@ class TestCLIOpt:
             (
                 [__prog__, "json", "yaml", "-i", JSON_FILE_PATH, "--yaml-indent", "1"],
                 {"indent": 1},
+            ),
+            # XML input opt
+            (
+                [
+                    __prog__,
+                    "xml",
+                    "yaml",
+                    "-i",
+                    XML_FILE_PATH,
+                    "--xml-process-namespaces",
+                ],
+                {"process_namespaces": True},
+            ),
+            (
+                [
+                    __prog__,
+                    "xml",
+                    "yaml",
+                    "-i",
+                    XML_FILE_PATH,
+                    "--xml-process-comments",
+                ],
+                {"process_comments": True},
+            ),
+            (
+                [
+                    __prog__,
+                    "json",
+                    "xml",
+                    "-i",
+                    JSON_FILE_PATH,
+                    "--xml-particle-document",
+                ],
+                {"full_document": False},
+            ),
+            (
+                [
+                    __prog__,
+                    "json",
+                    "xml",
+                    "-i",
+                    JSON_FILE_PATH,
+                    "--xml-disable-pretty",
+                ],
+                {"pretty": False},
             ),
         ],
     )

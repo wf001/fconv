@@ -58,6 +58,26 @@ def _set_opts() -> Namespace:
     )
     p.add_argument("--yaml-indent", help=HELP["yaml_indent"], type=int)
 
+    # xml intput
+    p.add_argument(
+        "--xml-process-namespaces",
+        help=HELP["xml_process_namespaces"],
+        action="store_true",
+    )
+    p.add_argument(
+        "--xml-process-comments", help=HELP["xml_process_comments"], action="store_true"
+    )
+
+    # xml output
+    p.add_argument(
+        "--xml-particle-document",
+        help=HELP["xml_particle_document"],
+        action="store_true",
+    )
+    p.add_argument(
+        "--xml-disable-pretty", help=HELP["xml_disable_pretty"], action="store_true"
+    )
+
     a = p.parse_args()
     return a
 
@@ -104,6 +124,16 @@ def parse_args(a):
         out_opt["explicit_end"] = True
     if a.yaml_indent is not None:
         out_opt["indent"] = a.yaml_indent
+    # xml input
+    if a.xml_process_namespaces:
+        out_opt["process_namespaces"] = True
+    if a.xml_process_comments:
+        out_opt["process_comments"] = True
+    # xml output
+    if a.xml_particle_document:
+        out_opt["full_document"] = False
+    if a.xml_disable_pretty:
+        out_opt["pretty"] = False
     return in_opt, out_opt
 
 
