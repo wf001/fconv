@@ -15,31 +15,33 @@ pip install fconv
 
 ```
 $ fconv --v
-version: x.x.x
+fconv: vx.x.x
 ```
 
 ## Features
-- Convert a file into other formatted file
+- Convert a format into other format
 
 - Supported format 
-	- json
-	- yaml
-	- toml
-	- xml
+	- JSON
+	- YAML
+	- TOML
+	- XML
 
 - To be supported
-	- ini
+	- INI
+	- JSON5
 
-You can use fconv as command-line tool and Python module.In condition of using as a module, fconv supports optional arguments.
+- You can use fconv as command-line tool and Python module.
+
+- Using fconv as a module, String and file are available as input or output.
+
+- Using fconv as CLI tool, only file is available as input and String and file are available as output.
+
+The options available in the CLI version are different from those available in the module version.
 
 To know which options are available,
 
-See the reference:
-
-- json:https://docs.python.org/3/library/json.html
-- yaml:https://pyyaml.org/wiki/PyYAMLDocumentation
-- toml:https://github.com/uiri/toml
-- xml:https://github.com/martinblech/xmltodict
+See [SPEC.md](https://github.com/wf001/fconv/blob/master/SPEC.md):
 
 ## Example
 ### Use as a module
@@ -71,6 +73,11 @@ fconv json yaml -i sample.json
 Convert yaml file into json formated file
 ```
 fconv yaml json -i sample.yaml -o result.json
+```
+
+Convert yaml file into json formated file with json indent option
+```
+fconv yaml json -i sample.yaml -o result.json --json-indent 2
 ```
 
 
