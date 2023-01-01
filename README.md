@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/wf001/fconv)
 ![Github](https://img.shields.io/static/v1?label=fconv&message=for%20Terminal&color=FA9BFA)
 ![GitHub release (latest by date)](https://img.shields.io/pypi/v/fconv)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/wf001/fconv/Python%20application)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/wf001/fconv/python.yaml?branch=master)
 ![PyPI version](https://img.shields.io/pypi/pyversions/fconv)
 
 fconv is a Command-Line utility and library for converting between multiple file formats such as JSON, YAML.
