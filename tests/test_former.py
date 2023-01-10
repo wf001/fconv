@@ -43,7 +43,7 @@ class TestIntegration:
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_file_to_file(
-        self, dir, src_format, target_format, src_path, target_format_loader
+        self, _manage_dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json file to yaml file
@@ -70,7 +70,7 @@ class TestIntegration:
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_file_to_str(
-        self, dir, src_format, target_format, src_path, target_format_loader
+        self, _manage_dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json file to yaml string
@@ -94,7 +94,7 @@ class TestIntegration:
         "src_format, target_format, src_path, target_format_loader", TESTSETS
     )
     def test_form_str_to_file(
-        self, dir, src_format, target_format, src_path, target_format_loader
+        self, _manage_dir, src_format, target_format, src_path, target_format_loader
     ):
         """
         Confirm converting json string to yaml file
@@ -152,7 +152,7 @@ class TestIntegration:
     )
     def test_form_file_to_file_with_opt(
         self,
-        dir,
+        _manage_dir,
         src_format,
         target_format,
         src_path,
@@ -210,7 +210,7 @@ class TestXmlIntegration:
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
     )
     def test_form_file_to_file(
-        self, dir, src_format, target_format, src_path, target_format_loader
+        self, _manage_dir, src_format, target_format, src_path, target_format_loader
     ):
         func = sys._getframe().f_code.co_name
         out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
@@ -255,7 +255,7 @@ class TestXmlIntegration:
         "src_format, target_format, src_path, target_format_loader", XML_TESTSETS
     )
     def test_form_str_to_file(
-        self, dir, src_format, target_format, src_path, target_format_loader
+        self, _manage_dir, src_format, target_format, src_path, target_format_loader
     ):
         func = sys._getframe().f_code.co_name
         out_name = f"./.tmp/{func}-{src_format.__name__}-{target_format.__name__}.out"
@@ -307,7 +307,7 @@ class TestXmlIntegration:
     )
     def test_form_file_to_file_with_opt(
         self,
-        dir,
+        _manage_dir,
         src_format,
         target_format,
         src_path,
