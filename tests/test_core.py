@@ -63,6 +63,22 @@ def test_form(mocker, Former, is_read_called, is_write_called):
     assert m_write.called is is_write_called
 
 
+def test_form_with_src_ctx(mocker):
+    m_read = mocker.patch(f"{MODULE_PATH}._read_file")
+    m_to = mocker.patch(f"{MODULE_PATH}._parse_to_internal")
+    m_from = mocker.patch(f"{MODULE_PATH}._parse_from_internal")
+    m_write = mocker.patch(f"{MODULE_PATH}._write_file")
+    Former(
+        src_format=FakeValidFormat,
+        target_format=FakeValidFormat,
+        target_path="dummy_in.json",
+    ).form('{"key": "value"}')
+    assert m_read.called is False
+    assert m_to.called is True
+    assert m_from.called is True
+    assert m_write.called is True
+
+
 @pytest.mark.parametrize(
     "src_format, target_format",
     [

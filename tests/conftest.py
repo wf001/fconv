@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture(scope="class")
-def dir():
+def _manage_dir():
     p = pathlib.Path("./.tmp")
 
     if p.exists():
