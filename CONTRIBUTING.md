@@ -1,3 +1,4 @@
+
 # Contributing to fconv
 
 Bug reports and code and documentation patches are welcome. 
@@ -24,9 +25,7 @@ If you are fixing an issue, the first step should be to create a test case that
 reproduces the incorrect behaviour. That will also help you to build an
 understanding of the issue at hand.
 
-### Development Environment
-
-#### Getting the code
+### 2.1 Getting the code
 
 Go to <https://github.com/wf001/fconv> and fork the project repository.
 
@@ -41,50 +40,37 @@ cd fconv
 git checkout -b my_topical_branch
 ```
 
-#### Setup
+### 2.2. Setup
 
 The [Makefile](https://github.com/wf001/fconv/blob/master/Makefile) contains a bunch of tasks to get you started.
 
 To get started, run the command below, which:
 
 
-#### install all of dependencies.
+**install all of dependencies.**
 ``` bash
 make install-dev
 ```
 
-#### test
+**test**
 ``` bash
 make check
 ```
 
-- Before running this command, recommend to create an isolated Python virtual environment inside `./venv`
+- Before running this command, recommend to create an **isolated** Python virtual environment inside `./venv`
   (via the standard library [venv](https://docs.python.org/3/library/venv.html) tool);
 
 ```bash
 source venv/bin/activate
 ```
 
-#### Making Changes
-
 Please make sure your changes conform to [Style Guide for Python Code](https://python.org/dev/peps/pep-0008/) (PEP8)
 and that `make check` passes.
 
-#### Testing & CI
+### 2.3. Testing & CI
 
 Please add tests for any new features and bug fixes.
 
 When you open a Pull Request, [GitHub Actions](https://github.com/wf001/fconv/actions) will automatically run fconv’s [test suite](https://github.com/wf001/fconv/tree/master/tests) against your code, so please make sure all checks pass.
 
-#### Running tests locally
-
-fconv uses the [pytest](https://pytest.org/) runner.
-
-```bash
-# Run tests on the current Python interpreter.
-make test
-
-# Run extended tests for code
-make check
-```
 
